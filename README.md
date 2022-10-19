@@ -1,1 +1,1 @@
-# distributed-architecture
+# Distributed Architecture
