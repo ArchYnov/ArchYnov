@@ -19,8 +19,7 @@ def main():
     elasticSearchClient = ElasticSearchClient()
     sentimentAnalysis = SentimentAnalysis()
 
-    twitter_feed = TwitterClient(elasticSearchClient, db_pickle, 
-    sentimentAnalysis)
+    twitter_feed = TwitterClient(elasticSearchClient, db_pickle, sentimentAnalysis)
     tmdb_feed = TMDbClient(elasticSearchClient)
     rss_feed = RSSClient(elasticSearchClient, sentimentAnalysis, {
         'allocinesemaine': 'http://rss.allocine.fr/ac/cine/cettesemaine',
