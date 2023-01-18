@@ -113,10 +113,11 @@ services:
       - ./.env:/usr/src/.env
       - ../feeds:/usr/src/feeds/twitterClient.py
       - ../tools:/usr/src/tools
+    environment:
+      UVICORN_PORT: 5001
     
   python2:
     container_name: python-tmdb
-    # command: python3 ../../stream.py
     build:
       dockerfile: python-tmdb/Dockerfile
       context: ./
@@ -125,6 +126,8 @@ services:
       - ./.env:/usr/src/.env
       - ../feeds:/usr/src/feeds/tmdbClient.py
       - ../tools:/usr/src/tools
+    environment:
+      UVICORN_PORT: 5002
     
   python3:
     container_name: python-RSS
@@ -137,7 +140,14 @@ services:
       - ./.env:/usr/src/.env
       - ../feeds:/usr/src/feeds/rssClient.py
       - ../tools:/usr/src/tools
+    environment:
+      UVICORN_PORT: 5003
     
+  python4:
+    container_name: python-scheduler
+    build:
+      dockerfile: python-RSS/Dockerfile
+      context: ./
 
 
   
