@@ -1,6 +1,8 @@
 version: "3"
 
 services:
+
+# HADOOP
   namenode:
     image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
     container_name: namenode
@@ -60,8 +62,66 @@ services:
       - hadoop_historyserver:/hadoop/yarn/timeline
     env_file:
       - ./hadoop.env
+
+# BASE DE DONNEES
+  elasticsearch:
+      image: elasticsearch:8.2.2
+      environment:
+        - discovery.type=single-node
+        - ES_JAVA_OPTS=-Xms1g -Xmx1g
+        - xpack.security.enabled=false
+      volumes:
+        - es_data:/usr/share/elasticsearch/data
+      ports:
+        - 9200:9200
+  
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    hostname: mongodb
+    restart: unless-stopped
+    command: mongod --auth
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_DATABASE: projetBDD
+      MONGODB_DATA_DIR: /data/db
+      MONGODB_LOG_DIR: /dev/null
+    ports:
+        - 27017:27017
+    volumes:
+      - mongo_db:/data/db
+  
+  # mongo-express:
+  #   image: mongo-express
+  #   restart: always
+  #   ports:
+  #     - 8081:8081
+  #   environment:
+  #     ME_CONFIG_MONGODB_ADMINUSERNAME: root
+  #     ME_CONFIG_MONGODB_ADMINPASSWORD: root
+  #     ME_CONFIG_MONGODB_URL: projetBDD
+  #   depends_on:
+  #     - mongodb
+
+  # SCRIPTS
+  pickeldb:
+    container_name: pickeldb
+    # command: python3 ../../stream.py
+    build:
+      dockerfile: pickelDB/Dockerfile
+      context: ./
+    volumes:
+      - ./pickelDB:/usr/src
+      - ./.env:/usr/src/.env
+      - ../feeds:/usr/src/feeds
+      - ../tools:/usr/src/tools
+
+
   
 volumes:
   hadoop_namenode:
   hadoop_datanode:
   hadoop_historyserver:
+  es_data:
+  mongo_db:
