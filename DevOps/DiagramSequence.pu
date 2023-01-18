@@ -1,0 +1,33 @@
+@startuml diagram
+    ' USERS
+    actor       User          as user
+    ' SCRIPTS
+    participant Scheduler     as schedule
+    participant MovieAPI      as movieAPI
+    participant RssApi        as rssApi
+    participant TweetApi      as tweetApi
+    ' SOURCES
+    collections TMDB          as tmdb
+    collections RSSfeeds      as rssFeeds
+    collections Twitter       as twitter
+    ' DATABASES
+    database    MongoDB       as mongodb
+    database    ElasticSearch as elasticsearch
+    database    Redis         as redis
+
+
+    ' ACTIONS
+    user        ->      schedule        : Fait des choses
+    schedule    ->      movieAPI        : Fetch new movies's infos
+    movieAPI    <-->    redis           : Fetch api key
+    movieAPI    <->     tmdb            : Fetch movies's infos
+    movieAPI    ->      mongodb         : Store movies's infos
+    movieAPI    ->      tweetApi        : Fetch related tweets
+    tweetApi    <-->    redis           : Fetch api key
+    tweetApi    <->     twitter         : Fetch tweets
+    tweetApi    ->      tweetApi        : Sentiment analysis on tweets
+    tweetApi    ->      elasticsearch   : Store tweet and sentiment analysis
+    tweetApi    ->      mongodb         : Add mean sentiment analysis of movie
+    schedule    ->      rssApi          : Fetch articles from sites
+    rssApi      ->      elasticsearch   : Store articles
+@enduml
