@@ -21,35 +21,32 @@ NewRSS -> Every now and then new articles are posted on their respective website
 In term of database we use MongoDB (https://www.mongodb.com/), Elasticsearch (https://www.elastic.co/) and as we said before  HDFS (https://hadoop.apache.org/).
 """
 
-import pickledb
-from tools.elasticSearch import ElasticSearchClient
-from tools.sentimentAnalysis import SentimentAnalysis
-from feeds.twitterClient import TwitterClient
+from tools.redis import RedisClient
+from tools.mongodb import MongodbClient
+from feeds.rssClient import RSSClient
 from fastapi import FastAPI
 
 app = FastAPI()
 
 TWITTER_MAX_FETCH = 50
-db_pickle = pickledb.load('project.db', False) 
-db_pickle.set('api_key', 'lQQaJPtSdyKab6zyi03lHSanu') 
-db_pickle.set('api_key_secret', 'texLfA0KI0VW428WMiPW5motO0z8PURFKvrJz0amktmGd0c3yK') 
-db_pickle.set('access_token', '1377622154683019265-RnmvsG8dt06VAdOvlcHhEaYZs6lVD0') 
-db_pickle.set('access_token_secret', 'SvWonpPDxsE3hNUfj2lrPjEvGb2Xj61tiJMWon0EKdEeg')
-elasticSearchClient = ElasticSearchClient()
-sentimentAnalysis = SentimentAnalysis()
+# db_pickle.set('api_key', 'lQQaJPtSdyKab6zyi03lHSanu') 
+# db_pickle.set('api_key_secret', 'texLfA0KI0VW428WMiPW5motO0z8PURFKvrJz0amktmGd0c3yK') 
+# db_pickle.set('access_token', '1377622154683019265-RnmvsG8dt06VAdOvlcHhEaYZs6lVD0') 
+# db_pickle.set('access_token_secret', 'SvWonpPDxsE3hNUfj2lrPjEvGb2Xj61tiJMWon0EKdEeg')
+mongodb_client = MongodbClient()
+rss_feed = RSSClient(mongodb_client, {
+        'allocinesemaine': 'http://rss.allocine.fr/ac/cine/cettesemaine',
+        'allocineaffiche': 'http://rss.allocine.fr/ac/cine/alaffiche',
+        'screenrant': 'https://screenrant.com/feed/',
+    })
 
-
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
-
-@app.get("/fetchTwitter/{movie_name}")
-async def fetchTwitter(movie_name):
+@app.get("/fetchRSS")
+async def fetchRSS():
     """ 
-        DESC : Route to fetch tweets based on movie name and store data
+        DESC : Route to fetch RSS flux based on provided URLs and store data
 
-        IN   : movie_name
+        IN   : None
         OUT  : result of the request
     """
-    twitter_feed = TwitterClient(elasticSearchClient, db_pickle, sentimentAnalysis)
-    return twitter_feed.pushNewTweets(query=movie_name, count=TWITTER_MAX_FETCH)
+    rss_feed.pushNewArticles()
+    return 200

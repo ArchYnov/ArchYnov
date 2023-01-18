@@ -20,7 +20,6 @@ class TMDbClient(object):
         tmdb.REQUESTS_TIMEOUT = 10
         tmdb.REQUESTS_SESSION = requests.Session()
         
-        self.db = elasticSearchClient
         self.img_dir_path = img_dir_path
         # self.new_movies = self.fetchNewMovies()
 
@@ -97,23 +96,7 @@ class TMDbClient(object):
                         if AlphabetDetector().only_alphabet_chars(movie['original_title'], 'LATIN')]
         return self.new_movies
     
-    # def pushDb(self):
-    #     actions = []
-    #     for article in articles:
-    #         if not alreadyExists
-    #         # Test if article is in HTML format, if yes, parses via parsingHtml function
-    #         if BeautifulSoup(article['summary'], 'html.parser').find():
-    #             article['summary'] = self.parsingHtml(article['summary'])
-    #         pol = self.sa.calculatePolarity_baseFive(article['summary']) if self.sa else 'n/a'
-    #         actions.append({
-    #             '_index': source,
-    #             '_id': article['id'],
-    #             '_source': {
-    #                 'title': article['title'],
-    #                 'text': article['summary'],
-    #                 'polarity': pol,
-    #                 'date': article['published_parsed'],
-    #             },
-    #         })
-    #     self.db.insertData(actions)
+    # def storeInfos(self, movies):
+    #     for movie in movies :
+
         

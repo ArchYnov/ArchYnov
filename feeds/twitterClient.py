@@ -49,7 +49,8 @@ class TwitterClient(object):
                     'nombre_like': tweet.favorite_count,
                 },
             })
-        self.db.insertData(actions)
+        # TODO vérifier le nom de la collection dans mongoDB
+        self.db.tweets.insert_one(actions)
 
     def deleteDb(self):
         """ 
@@ -82,7 +83,7 @@ class TwitterClient(object):
 
     def pushNewTweets(self, query, count):
         """ 
-        DESC : fetch tweets before sending formeted version of them to the DB
+        DESC : fetch tweets before sending formatted version of them to the DB
 
         IN   :  query - search input to fetch tweets
                 count - number of tweet to download ( default is 10 )
