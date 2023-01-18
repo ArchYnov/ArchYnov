@@ -74,6 +74,13 @@ services:
         - es_data:/usr/share/elasticsearch/data
       ports:
         - 9200:9200
+  redis:
+    image: redis:latest
+    ports:
+      - 6379:6379
+    volumes:
+      - redis_data:/data
+    command: [ "redis-server"]
   
   mongodb:
     image: mongo
@@ -116,6 +123,7 @@ services:
       - ./.env:/usr/src/.env
       - ../feeds:/usr/src/feeds
       - ../tools:/usr/src/tools
+    
 
 
   
@@ -125,3 +133,4 @@ volumes:
   hadoop_historyserver:
   es_data:
   mongo_db:
+  redis_data:
