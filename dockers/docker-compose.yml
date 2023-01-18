@@ -112,16 +112,40 @@ services:
   #     - mongodb
 
   # SCRIPTS
-  pickeldb:
-    container_name: pickeldb
+  python:
+    container_name: python-twitter
     # command: python3 ../../stream.py
     build:
-      dockerfile: pickelDB/Dockerfile
+      dockerfile: python-twitter/Dockerfile
       context: ./
     volumes:
-      - ./pickelDB:/usr/src
+      - ./python-twitter:/usr/src
       - ./.env:/usr/src/.env
-      - ../feeds:/usr/src/feeds
+      - ../feeds:/usr/src/feeds/twitterClient.py
+      - ../tools:/usr/src/tools
+    
+  python2:
+    container_name: python-tmdb
+    # command: python3 ../../stream.py
+    build:
+      dockerfile: python-tmdb/Dockerfile
+      context: ./
+    volumes:
+      - ./python-tmdb:/usr/src
+      - ./.env:/usr/src/.env
+      - ../feeds:/usr/src/feeds/tmdbClient.py
+      - ../tools:/usr/src/tools
+    
+  python3:
+    container_name: python-RSS
+    # command: python3 ../../stream.py
+    build:
+      dockerfile: python-RSS/Dockerfile
+      context: ./
+    volumes:
+      - ./python-RSS:/usr/src
+      - ./.env:/usr/src/.env
+      - ../feeds:/usr/src/feeds/rssClient.py
       - ../tools:/usr/src/tools
     
 
