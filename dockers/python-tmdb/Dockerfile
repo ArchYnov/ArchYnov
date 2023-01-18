@@ -5,13 +5,9 @@ RUN mkdir -p /usr/src
 WORKDIR /usr/src
 RUN mkdir dockers
 
-
-
 # copy files
-COPY pickelDB/requirements.txt ./
-COPY app.py ./dockers/app.py
-COPY pickelDB/stream.py ./
-
+COPY main.py ./dockers/main.py
 
 RUN pip3 install -r requirements.txt
-CMD ["python3", "stream.py"]
+
+CMD ["uvicorn", "main:app"]
