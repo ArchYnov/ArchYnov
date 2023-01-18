@@ -64,16 +64,6 @@ services:
       - ./hadoop.env
 
 # BASE DE DONNEES
-  elasticsearch:
-      image: elasticsearch:8.2.2
-      environment:
-        - discovery.type=single-node
-        - ES_JAVA_OPTS=-Xms1g -Xmx1g
-        - xpack.security.enabled=false
-      volumes:
-        - es_data:/usr/share/elasticsearch/data
-      ports:
-        - 9200:9200
   redis:
     image: redis:latest
     ports:
