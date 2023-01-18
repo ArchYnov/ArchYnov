@@ -25,6 +25,7 @@ from tools.redis import RedisClient
 from tools.mongodb import MongodbClient
 from feeds.twitterClient import TwitterClient
 from fastapi import FastAPI
+import uvicorn
 
 app = FastAPI()
 
@@ -36,12 +37,12 @@ TWITTER_MAX_FETCH = 50
 mongodb_client = MongodbClient()
 twitter_feed = TwitterClient(mongodb_client)
 
-@app.get("/fetchTwitter/{movie_name}")
-async def fetchTwitter(movie_name):
+@app.get("/fetchTwitter")
+async def fetchTwitter():
     """ 
         DESC : Route to fetch tweets based on movie name and store data
 
-        IN   : movie_name
+        IN   : none
         OUT  : result of the request
     """
     # Fetch api key on redis

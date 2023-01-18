@@ -25,6 +25,7 @@ from tools.redis import RedisClient
 from tools.mongodb import MongodbClient
 from feeds.tmdbClient import TMDbClient
 from fastapi import FastAPI
+import uvicorn
 
 app = FastAPI()
 
