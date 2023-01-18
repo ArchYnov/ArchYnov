@@ -41,7 +41,7 @@ sentimentAnalysis = SentimentAnalysis()
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return 200
 
 @app.get("/fetchTwitter/{movie_name}")
 async def fetchTwitter(movie_name):
