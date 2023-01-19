@@ -20,3 +20,4 @@ urllib3==1.26.13
 polyglot==15.10.3
 alphabet-detector==0.0.7
 emoji==2.2.0
+pymongo==3.12.1
