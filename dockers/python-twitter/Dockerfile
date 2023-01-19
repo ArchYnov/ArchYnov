@@ -6,8 +6,10 @@ WORKDIR /usr/src
 RUN mkdir dockers
 
 # copy files
-COPY main.py ./dockers/main.py
+COPY python-twitter/requirements.txt ./
+COPY python-twitter/main.py ./dockers/python-twitter/main.py
 
 RUN pip3 install -r requirements.txt
 
-CMD ["uvicorn", "main:app"]
+# CMD ["uvicorn", "main:app"]
+CMD ["python3", "main.py"]
