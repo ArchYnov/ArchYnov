@@ -4,7 +4,7 @@ from polyglot.detect import Detector
 
 
 class TwitterClient(object):
-    def __init__(self, db, db_pickle, sentimentModule=None, supported_languages=None):
+    def __init__(self, db, client_redis, sentimentModule=None, supported_languages=None):
         """ 
         DESC : initiate varibles and set-up the tweepy class for later usage
 
@@ -22,8 +22,10 @@ class TwitterClient(object):
                 self.supported_languages = ['en']
 
         try:
-            self.auth = OAuthHandler(db_pickle.get('api_key'), db_pickle.get('api_key_secret'))
-            self.auth.set_access_token(db_pickle.get('access_token'), db_pickle.get('access_token_secret'))
+            key = ["api_key","api_key_secret","access_token","access_token_secret"]
+            token = client_redis.get_value_by_key(key)
+            self.auth = OAuthHandler(token['api_key'], token['api_key_secret'])
+            self.auth.set_access_token(token['access_token'], token['access_token_secret'])
             self.api = API(self.auth)
         except:
             print('Error: Authentication Failed')
