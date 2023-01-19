@@ -72,34 +72,33 @@ services:
       - redis_data:/data
     command: [ "redis-server"]
   
-  mongodb:
+  mongo:
     image: mongo
     container_name: mongodb
     hostname: mongodb
     restart: unless-stopped
     command: mongod --auth
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root
-      MONGO_INITDB_DATABASE: projetBDD
-      MONGODB_DATA_DIR: /data/db
-      MONGODB_LOG_DIR: /dev/null
-    ports:
-        - 27017:27017
+    env_file: .env
     volumes:
-      - mongo_db:/data/db
-  
-  # mongo-express:
-  #   image: mongo-express
-  #   restart: always
-  #   ports:
-  #     - 8081:8081
-  #   environment:
-  #     ME_CONFIG_MONGODB_ADMINUSERNAME: root
-  #     ME_CONFIG_MONGODB_ADMINPASSWORD: root
-  #     ME_CONFIG_MONGODB_URL: projetBDD
-  #   depends_on:
-  #     - mongodb
+      - mongo:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DB_NAME}
+      MONGODB_DATA_DIR: ./volumes/db
+      MONGODB_LOG_DIR: /dev/null
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_USERNAME}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_PASSWORD}
+      ME_CONFIG_MONGODB_URL: ${MONGO_URL}
+    depends_on:
+      - mongo
 
   # SCRIPTS
   python:
@@ -111,10 +110,13 @@ services:
     volumes:
       - ./python-twitter:/usr/src
       - ./.env:/usr/src/.env
-      - ../feeds:/usr/src/feeds/twitterClient.py
+      - ../feeds:/usr/src/feeds
       - ../tools:/usr/src/tools
     environment:
       UVICORN_PORT: 5001
+    depends_on:
+      - redis
+      - mongo
     
   python2:
     container_name: python-tmdb
@@ -128,6 +130,8 @@ services:
       - ../tools:/usr/src/tools
     environment:
       UVICORN_PORT: 5002
+    depends_on:
+      - mongo
     
   python3:
     container_name: python-RSS
@@ -142,6 +146,8 @@ services:
       - ../tools:/usr/src/tools
     environment:
       UVICORN_PORT: 5003
+    depends_on:
+      - mongo
     
   python4:
     container_name: python-scheduler
@@ -155,6 +161,5 @@ volumes:
   hadoop_namenode:
   hadoop_datanode:
   hadoop_historyserver:
-  es_data:
-  mongo_db:
+  mongo:
   redis_data:
