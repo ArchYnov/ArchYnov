@@ -22,7 +22,7 @@ In term of database we use MongoDB (https://www.mongodb.com/), Elasticsearch (ht
 """
 
 from tools.redis import RedisClient
-from tools.mongodb import MongodbClient
+from tools.mongo import MongodbClient
 from feeds.tmdbClient import TMDbClient
 from fastapi import FastAPI
 import uvicorn

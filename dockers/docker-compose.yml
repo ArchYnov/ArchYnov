@@ -110,10 +110,12 @@ services:
     volumes:
       - ./python-twitter:/usr/src
       - ./.env:/usr/src/.env
-      - ../feeds:/usr/src/feeds
-      - ../tools:/usr/src/tools
+      - ./feeds:/usr/src/feeds
+      - ./tools:/usr/src/tools
     environment:
       UVICORN_PORT: 5001
+    ports:
+      - 5001:5001
     depends_on:
       - redis
       - mongo
@@ -126,10 +128,12 @@ services:
     volumes:
       - ./python-tmdb:/usr/src
       - ./.env:/usr/src/.env
-      - ../feeds:/usr/src/feeds/tmdbClient.py
-      - ../tools:/usr/src/tools
+      - ./feeds:/usr/src/feeds
+      - ./tools:/usr/src/tools
     environment:
       UVICORN_PORT: 5002
+    ports:
+      - 5002:5002
     depends_on:
       - mongo
     
@@ -142,10 +146,12 @@ services:
     volumes:
       - ./python-RSS:/usr/src
       - ./.env:/usr/src/.env
-      - ../feeds:/usr/src/feeds/rssClient.py
-      - ../tools:/usr/src/tools
+      - ./feeds:/usr/src/feeds
+      - ./tools:/usr/src/tools
     environment:
       UVICORN_PORT: 5003
+    ports:
+      - 5003:5003
     depends_on:
       - mongo
     

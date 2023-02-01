@@ -21,8 +21,7 @@ NewRSS -> Every now and then new articles are posted on their respective website
 In term of database we use MongoDB (https://www.mongodb.com/), Elasticsearch (https://www.elastic.co/) and as we said before  HDFS (https://hadoop.apache.org/).
 """
 
-from tools.redis import RedisClient
-from tools.mongodb import MongodbClient
+from tools.mongo import MongodbClient
 from feeds.rssClient import RSSClient
 from fastapi import FastAPI
 import uvicorn

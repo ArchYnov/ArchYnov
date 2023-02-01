@@ -21,3 +21,6 @@ polyglot==15.10.3
 alphabet-detector==0.0.7
 emoji==2.2.0
 pymongo==3.12.1
+fastapi==0.89.1
+pydantic==1.10.4
+uvicorn==0.20.0

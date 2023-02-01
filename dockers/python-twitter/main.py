@@ -22,12 +22,12 @@ In term of database we use MongoDB (https://www.mongodb.com/), Elasticsearch (ht
 """
 
 from tools.redis import RedisClient
-from tools.mongo import Mongo
+from tools.mongo import MongodbClient
 from feeds.twitterClient import TwitterClient
-# from fastapi import FastAPI
-# import uvicorn
+from fastapi import FastAPI
+import uvicorn
 
-# app = FastAPI()
+app = FastAPI()
 
 TWITTER_MAX_FETCH = 50
 # connect to redis
@@ -37,25 +37,25 @@ client_redis.create_key_value("api_key_secret", 'texLfA0KI0VW428WMiPW5motO0z8PUR
 client_redis.create_key_value("access_token", '1377622154683019265-RnmvsG8dt06VAdOvlcHhEaYZs6lVD0')
 client_redis.create_key_value("access_token_secret", 'SvWonpPDxsE3hNUfj2lrPjEvGb2Xj61tiJMWon0EKdEeg')
 
-client_mongo = Mongo()
+client_mongo = MongodbClient()
 
 # A supprimer et mettre dans TwitterClient c'est juste pour le test
 key = ["api_key","api_key_secret","access_token","access_token_secret"]
 token = client_redis.get_value_by_key(key)
 client_mongo.insertOne("test", {"key": token['api_key']})
 
-# twitter_feed = TwitterClient(client_mongo, client_redis)
+twitter_feed = TwitterClient(client_mongo, client_redis)
 
-# @app.get("/fetchTwitter")
-# async def fetchTwitter():
-#     """ 
-#         DESC : Route to fetch tweets based on movie name and store data
+@app.get("/fetchTwitter")
+async def fetchTwitter():
+    """ 
+        DESC : Route to fetch tweets based on movie name and store data
 
-#         IN   : none
-#         OUT  : result of the request
-#     """
-#     # Fetch api key on redis
-#     # Fetch mongoDB movie list
-#     for movie_name in all_movies:
-#         twitter_feed.pushNewTweets(query=movie_name, count=TWITTER_MAX_FETCH)
-#     return 200
+        IN   : none
+        OUT  : result of the request
+    """
+    # Fetch api key on redis
+    # Fetch mongoDB movie list
+    for movie_name in all_movies:
+        twitter_feed.pushNewTweets(query=movie_name, count=TWITTER_MAX_FETCH)
+    return 200

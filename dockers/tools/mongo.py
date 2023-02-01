@@ -1,7 +1,7 @@
 from pymongo import MongoClient
 
 # A Completer
-class Mongo():
+class MongodbClient():
 
     def __init__(self):
         self.client = MongoClient("mongodb://root:root@mongo:27017/")
