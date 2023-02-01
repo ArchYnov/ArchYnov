@@ -34,8 +34,9 @@ class TwitterClient(object):
         IN   : array of dict containing every infos about their tweet 
         OUT  : array of sorted provided dict 
         """
+        actions = []
         for tweet in tweets:
-            self.db.insertOne("tweets", {
+            actions.append({
                 '_index': 'twitter',
                 '_id': tweet.id_str,
                 '_source': {
@@ -45,7 +46,7 @@ class TwitterClient(object):
                     'nombre_like': tweet.favorite_count,
                 },
             })
-        # TODO vérifier le nom de la collection dans mongoDB
+        self.db.insertOne("tweets", actions)
         
 
     def deleteDb(self):
