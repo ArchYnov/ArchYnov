@@ -2,9 +2,8 @@ from tweepy import OAuthHandler, API, Cursor
 from tweepy.errors import TweepyException
 from polyglot.detect import Detector
 
-
 class TwitterClient(object):
-    def __init__(self, db, client_redis, sentimentModule=None, supported_languages=None):
+    def __init__(self, db, client_redis, supported_languages=None):
         """ 
         DESC : initiate varibles and set-up the tweepy class for later usage
 
@@ -13,20 +12,18 @@ class TwitterClient(object):
                 supported_language - only fetch certain languages (used for emoji conversion) (default is english) 
         """
         self.db = db
-        self.sa = sentimentModule
-        self.supported_languages = supported_languages 
-        if not self.supported_languages:
-            if sentimentModule:
-                self.supported_languages = sentimentModule.supported_languages
-            else:
-                self.supported_languages = ['en']
+        if supported_languages and type(supported_languages) == list:
+            self.supported_languages = supported_languages
+        else:
+            self.supported_languages = ['en']
 
         try:
             key = ["api_key","api_key_secret","access_token","access_token_secret"]
-            token = client_redis.get_value_by_key(key)
-            self.auth = OAuthHandler(token['api_key'], token['api_key_secret'])
-            self.auth.set_access_token(token['access_token'], token['access_token_secret'])
+            tokens = client_redis.get_value_by_key(key)
+            self.auth = OAuthHandler(tokens['api_key'], tokens['api_key_secret'])
+            self.auth.set_access_token(tokens['access_token'], tokens['access_token_secret'])
             self.api = API(self.auth)
+            
         except:
             print('Error: Authentication Failed')
 
@@ -37,22 +34,19 @@ class TwitterClient(object):
         IN   : array of dict containing every infos about their tweet 
         OUT  : array of sorted provided dict 
         """
-        actions = []
         for tweet in tweets:
-            pol = self.sa.calculatePolarity_baseFive(tweet.full_text) if self.sa else 'n/a'
-            actions.append({
+            self.db.insertOne("tweets", {
                 '_index': 'twitter',
                 '_id': tweet.id_str,
                 '_source': {
                     'date': tweet.created_at,
                     'text': tweet.full_text,
-                    'polarity': pol,
                     'nombre_retweet': tweet.retweet_count,
                     'nombre_like': tweet.favorite_count,
                 },
             })
         # TODO vérifier le nom de la collection dans mongoDB
-        self.db.tweets.insert_one(actions)
+        
 
     def deleteDb(self):
         """ 
