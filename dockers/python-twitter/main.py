@@ -39,7 +39,6 @@ client_redis.create_key_value("access_token_secret", 'SvWonpPDxsE3hNUfj2lrPjEvGb
 
 client_mongo = MongodbClient()
 
-# A supprimer et mettre dans TwitterClient c'est juste pour le test
 key = ["api_key","api_key_secret","access_token","access_token_secret"]
 tokens = client_redis.get_value_by_key(key)
 
@@ -53,8 +52,6 @@ async def fetchTwitter():
         IN   : none
         OUT  : result of the request
     """
-    # Fetch api key on redis
-    client_redis.get_value_by_key()
     # Fetch mongoDB movie list
     for movie_name in all_movies:
         twitter_feed.pushNewTweets(query=movie_name, count=TWITTER_MAX_FETCH)
