@@ -24,8 +24,9 @@ In term of database we use MongoDB (https://www.mongodb.com/), Elasticsearch (ht
 from tools.redis import RedisClient
 from tools.mongo import MongodbClient
 from feeds.tmdbClient import TMDbClient
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 import uvicorn
+import json
 from tools.redis import RedisClient
 
 app = FastAPI()
@@ -48,14 +49,14 @@ async def fetchTmdb():
     # Fetch api key dans Redis
     try :
         tmdb_feed.fetchNewMovies()
-        response = {
-            "status": "success",
-            "code": 200
-        }
+        code = 200
+        content = "success"
     except :
-        response = {
-            "status": "erreur dans l'insertion des données",
-            "code": 500
-        }
+        code = 500
+        content = "erreur dans l'insertion des données",
 
-    return response
+    return Response(
+        status_code=code,
+        content=json.dumps({"result": content}),
+        media_type="application/json"
+    )
