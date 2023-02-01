@@ -25,17 +25,20 @@ from tools.redis import RedisClient
 from tools.mongo import MongodbClient
 from feeds.twitterClient import TwitterClient
 from fastapi import FastAPI
+from fastapi import Response
+import json
 import uvicorn
 
 app = FastAPI()
 
-TWITTER_MAX_FETCH = 50
+TWITTER_MAX_FETCH = 3
 # connect to redis
 client_redis = RedisClient()
-client_redis.create_key_value("api_key", 'lQQaJPtSdyKab6zyi03lHSanu')
-client_redis.create_key_value("api_key_secret", 'texLfA0KI0VW428WMiPW5motO0z8PURFKvrJz0amktmGd0c3yK')
-client_redis.create_key_value("access_token", '1377622154683019265-RnmvsG8dt06VAdOvlcHhEaYZs6lVD0')
-client_redis.create_key_value("access_token_secret", 'SvWonpPDxsE3hNUfj2lrPjEvGb2Xj61tiJMWon0EKdEeg')
+client_redis.create_key_value("api_key", 'MyjgoENpH5NcIaNklNzKrbcBD')
+client_redis.create_key_value("api_key_secret", 'OFcquJlUYOYaOlwcNbSS59cDzI7ovxLZn92hGmivypL4FahtNk')
+client_redis.create_key_value("access_token", '1377622154683019265-cbNJTqBWzPJ5CJDdUOVazLk518hOba')
+client_redis.create_key_value("access_token_secret", 'Qjo3HWA2DPz7pF2RjVgobTGG6m8OKtZLmiYBYYIfCZHoY')
+# client_redis.create_key_value("bearer_token", 'AAAAAAAAAAAAAAAAAAAAAPBNlgEAAAAAO1PAncTKlPq1BL2Zl%2FKMA7wJb%2Fk%3DhnyDOuxBoVSgZ6n3QIPPyEd0cnMSoVkt0tBXtxkrli5UJ7c5kz')
 
 client_mongo = MongodbClient()
 
@@ -53,6 +56,13 @@ async def fetchTwitter():
         OUT  : result of the request
     """
     # Fetch mongoDB movie list
+    testCol = client_mongo.getAllDocumentsFromCollection("testTwitter")
+    all_movies = [ ele["title"] for ele in testCol ]
+    print(all_movies)
     for movie_name in all_movies:
         twitter_feed.pushNewTweets(query=movie_name, count=TWITTER_MAX_FETCH)
-    return 200
+    return Response(
+            status_code=200,
+            content=json.dumps({"result": "sucess"}),
+            media_type="application/json"
+        )

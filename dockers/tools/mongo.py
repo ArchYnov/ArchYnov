@@ -21,6 +21,20 @@ class MongodbClient():
         collection = self.db.get_collection(name_collection)
         return collection
     
+    def getAllDocumentsFromCollection(self, name_collection):
+        """get all documents
+
+        Args:
+            name_collection (str): name of the collection
+
+        Returns:
+            collection: collection
+        """
+        
+        collection = self.db[name_collection]
+        allCollection = collection.find({})
+        return allCollection
+    
 
     def insertOne(self, name_collection, data):
         """insert un element en base de données
