@@ -24,18 +24,19 @@ In term of database we use MongoDB (https://www.mongodb.com/), Elasticsearch (ht
 from tools.redis import RedisClient
 from tools.mongo import MongodbClient
 from feeds.tmdbClient import TMDbClient
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 import uvicorn
+import json
+from tools.redis import RedisClient
 
 app = FastAPI()
 
-TWITTER_MAX_FETCH = 50
-# db_pickle.set('api_key', 'lQQaJPtSdyKab6zyi03lHSanu') 
-# db_pickle.set('api_key_secret', 'texLfA0KI0VW428WMiPW5motO0z8PURFKvrJz0amktmGd0c3yK') 
-# db_pickle.set('access_token', '1377622154683019265-RnmvsG8dt06VAdOvlcHhEaYZs6lVD0') 
-# db_pickle.set('access_token_secret', 'SvWonpPDxsE3hNUfj2lrPjEvGb2Xj61tiJMWon0EKdEeg')
+client_redis = RedisClient()
+client_redis.create_key_value("api_key_tmdb", '678b941591dc9bdb6ec1352563253fdd')
+api_key = client_redis.get_value_by_key(["api_key_tmdb"])
+
 mongodb_client = MongodbClient()
-tmdb_feed = TMDbClient(mongodb_client)
+tmdb_feed = TMDbClient(mongo_client=mongodb_client, api_key=api_key['api_key_tmdb'])
 
 @app.get("/fetchTmdb")
 async def fetchTmdb():
@@ -46,6 +47,16 @@ async def fetchTmdb():
         OUT  : result of the request
     """
     # Fetch api key dans Redis
-    tmdb_feed.fetchNewMovies()
-    # Push data to DB
-    return 200
+    try :
+        tmdb_feed.fetchNewMovies()
+        code = 200
+        content = "success"
+    except :
+        code = 500
+        content = "erreur dans l'insertion des données",
+
+    return Response(
+        status_code=code,
+        content=json.dumps({"result": content}),
+        media_type="application/json"
+    )

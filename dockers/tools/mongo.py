@@ -46,3 +46,15 @@ class MongodbClient():
         print("insert")
         collection = self.getCollection(name_collection)
         collection.insert_one(data)  
+    
+
+    def insertMany(self, name_collection, data) :
+        """insert plusieurs elements en base de données
+
+        Args:
+            name_collection (str): Name of the collection
+            data (list): data insert in bdd
+        """
+        print("insert many")
+        collection = self.getCollection(name_collection)
+        collection.insert_many(data) 
