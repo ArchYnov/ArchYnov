@@ -2,7 +2,6 @@ from tweepy import OAuthHandler, API, Cursor
 from tweepy.errors import TweepyException
 from polyglot.detect import Detector
 
-
 class TwitterClient(object):
     def __init__(self, db, client_redis, sentimentModule=None, supported_languages=None):
         """ 
@@ -14,7 +13,7 @@ class TwitterClient(object):
         """
         self.db = db
         self.sa = sentimentModule
-        self.supported_languages = supported_languages 
+        self.supported_languages = supported_languages
         if not self.supported_languages:
             if sentimentModule:
                 self.supported_languages = sentimentModule.supported_languages
@@ -23,9 +22,9 @@ class TwitterClient(object):
 
         try:
             key = ["api_key","api_key_secret","access_token","access_token_secret"]
-            token = client_redis.get_value_by_key(key)
-            self.auth = OAuthHandler(token['api_key'], token['api_key_secret'])
-            self.auth.set_access_token(token['access_token'], token['access_token_secret'])
+            tokens = client_redis.get_value_by_key(key)
+            self.auth = OAuthHandler(tokens['api_key'], tokens['api_key_secret'])
+            self.auth.set_access_token(tokens['access_token'], tokens['access_token_secret'])
             self.api = API(self.auth)
         except:
             print('Error: Authentication Failed')
