@@ -10,18 +10,18 @@ CLEAR_SYNTAXE = 'cls' if platform == 'win32' else 'clear'
 
 
 class TMDbClient(object):
-    def __init__(self, elasticSearchClient=None, img_dir_path=os.path.join(os.getcwd(), 'images')):
+    def __init__(self, mongo_client, api_key, img_dir_path=os.path.join(os.getcwd(), 'images')):
         """
         DESC : set up tmdb API and fetch actu
 
         IN   : img_dir_path -  define the image dir ( default is eq to <mainApp>/images ) 
         """
-        tmdb.API_KEY = '678b941591dc9bdb6ec1352563253fdd'
+        tmdb.API_KEY = api_key
         tmdb.REQUESTS_TIMEOUT = 10
         tmdb.REQUESTS_SESSION = requests.Session()
         
         self.img_dir_path = img_dir_path
-        # self.new_movies = self.fetchNewMovies()
+        self.mongo_client = mongo_client
 
     def movieMenu(self):
         """
@@ -94,9 +94,7 @@ class TMDbClient(object):
     def fetchNewMovies(self):
         self.new_movies = [movie for movie in tmdb.Movies().now_playing()['results'] 
                         if AlphabetDetector().only_alphabet_chars(movie['original_title'], 'LATIN')]
-        return self.new_movies
+        self.mongo_client.insertMany("tmdb", self.new_movies)
     
-    # def storeInfos(self, movies):
-    #     for movie in movies :
 
         
