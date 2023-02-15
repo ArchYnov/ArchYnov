@@ -55,6 +55,6 @@ class MongodbClient():
             name_collection (str): Name of the collection
             data (list): data insert in bdd
         """
-        print("insert many")
+        
         collection = self.getCollection(name_collection)
         collection.insert_many(data) 

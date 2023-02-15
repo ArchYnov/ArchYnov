@@ -161,6 +161,12 @@ services:
     build:
       dockerfile: python-RSS/Dockerfile
       context: ./
+    volumes:
+      - ./scheduler:/usr/src
+    depends_on:
+      - python
+      - python2
+      - python3
 
 
   
