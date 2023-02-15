@@ -23,14 +23,9 @@ In term of database we use MongoDB (https://www.mongodb.com/), Elasticsearch (ht
 
 from datetime import datetime
 import requests
-from apscheduler.schedulers.blocking import BlockingScheduler
-from apscheduler.triggers.interval import IntervalTrigger
+from json import loads
 
-scheduler = BlockingScheduler()
-@scheduler.scheduled_job(IntervalTrigger(hours=3))
-def launchFetches():
-    if requests.get('0.0.0.0:5002/fetchTmdb') == 200 : "Tmbd Fetch OK"
-    if requests.get('0.0.0.0:5002/fetchTwitter') == 200 : "Twitter Fetch OK"
-    if requests.get('0.0.0.0:5002/fetchRss') == 200 : "RSS Fetch OK"
+data = requests.get('http://python2:5002/fetchTmdb').content
+data = loads(data.decode("utf-8"))
+print(data["result"])
 
-scheduler.start()
