@@ -9,8 +9,8 @@ logger = logging.getLogger(__name__)
 
 class Database:
     def __init__(self, settings: Settings):
-        self._client = MongoClient(settings.MONGODB_URL)
-        self._db = self._client[settings.MONGODB_NAME]
+        self._client = MongoClient(settings.MONGO_URL)
+        self._db = self._client[settings.MONGO_DB_NAME]
 
     def get_db(self):
         return self._db

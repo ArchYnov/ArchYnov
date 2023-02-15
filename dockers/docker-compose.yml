@@ -78,6 +78,8 @@ services:
     hostname: mongodb
     restart: unless-stopped
     command: mongod --auth
+    ports:
+      - 27017:27017
     env_file: .env
     volumes:
       - mongo:/data/db
@@ -167,6 +169,18 @@ services:
       - python
       - python2
       - python3
+
+  api-movies:
+    container_name: api-movies
+    build: 
+      context: ./
+      dockerfile: api/service_movies/DockerFile
+    volumes:
+      - ./api/service_movies:/usr/app
+    ports:
+      - 4000:5000
+    depends_on:
+      - mongo
 
 
   
