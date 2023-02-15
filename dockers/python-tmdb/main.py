@@ -46,9 +46,8 @@ async def fetchTmdb():
         IN   : movie_name
         OUT  : result of the request
     """
-    # Fetch api key dans Redis
     try :
-        tmdb_feed.fetchNewMovies()
+        tmdb_feed.fetchNewMovies(['id', 'original_title'])
         code = 200
         content = "success"
     except :

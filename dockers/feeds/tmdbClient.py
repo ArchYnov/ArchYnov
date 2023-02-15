@@ -91,10 +91,12 @@ class TMDbClient(object):
         else:
             return 0
 
-    def fetchNewMovies(self):
+    def fetchNewMovies(self, checkDuplicates):
         self.new_movies = [movie for movie in tmdb.Movies().now_playing()['results'] 
                         if AlphabetDetector().only_alphabet_chars(movie['original_title'], 'LATIN')]
-        self.mongo_client.insertMany("tmdb", self.new_movies)
+        # Check doublons
+        # Ajouter propriété nbFetchTwitter et nbFetchRss
+        self.mongo_client.insertMany("tmdb", self.new_movies, checkDuplicates)
     
 
         

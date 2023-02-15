@@ -43,18 +43,31 @@ class MongodbClient():
             name_collection (str): Name of the collection
             data (dict): data insert in bdd
         """
-        print("insert")
         collection = self.getCollection(name_collection)
         collection.insert_one(data)  
     
 
-    def insertMany(self, name_collection, data) :
+    def insertMany(self, name_collection, data, checkDuplicates = []) :
         """insert plusieurs elements en base de données
 
         Args:
             name_collection (str): Name of the collection
             data (list): data insert in bdd
         """
-        
         collection = self.getCollection(name_collection)
-        collection.insert_many(data) 
+        findCriteria = {"$or" : []}
+        for column in checkDuplicates:
+            findCriteria["$or"].append({column : { "$in" : [ele[column] for ele in data]}})
+        
+        duplicates = {}
+        for column in checkDuplicates :
+            duplicates[column] = [ele[column] for ele in collection.find(findCriteria)]
+
+        dataToInsert = []
+        for column in checkDuplicates:
+            for element in data:
+                if element[column] not in duplicates[column] and element not in dataToInsert:
+                    dataToInsert.append(element)
+        
+        if dataToInsert :
+            collection.insert_many(dataToInsert) 

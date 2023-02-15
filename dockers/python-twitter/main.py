@@ -31,7 +31,7 @@ import uvicorn
 
 app = FastAPI()
 
-TWITTER_MAX_FETCH = 3
+TWITTER_MAX_FETCH = 890
 # connect to redis
 client_redis = RedisClient()
 client_redis.create_key_value("api_key", 'MyjgoENpH5NcIaNklNzKrbcBD')

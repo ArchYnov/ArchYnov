@@ -31,6 +31,6 @@ scheduler = BlockingScheduler()
 def launchFetches():
     if requests.get('0.0.0.0:5002/fetchTmdb') == 200 : "Tmbd Fetch OK"
     if requests.get('0.0.0.0:5002/fetchTwitter') == 200 : "Twitter Fetch OK"
-    if requests.get('0.0.0.0:5002/fetchTwitter') == 200 : "RSS Fetch OK"
+    if requests.get('0.0.0.0:5002/fetchRss') == 200 : "RSS Fetch OK"
 
 scheduler.start()
