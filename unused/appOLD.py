@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 __copyright__ = "MIT"
-__date__ = "2022-01-28"
+__date__ = "2023-01-28"
 __version__= "0.1.0"
 __status__ = "Development"
 
@@ -29,7 +29,7 @@ import os
 
 from feeds.tmdbClient import TMDbClient
 from tools.elasticSearch import ElasticSearchClient
-from dockers.app import DockerManager
+# from dockers.app import DockerManager
 
 CLEAR_SYNTAXE = 'cls' if platform == 'win32' else 'clear'
 
@@ -37,15 +37,15 @@ CLEAR_SYNTAXE = 'cls' if platform == 'win32' else 'clear'
 def main():
     elasticSearchClient = ElasticSearchClient()
 
-    dockerManager = DockerManager()
-    dockerManager.start(1, 'dockers')
+    # dockerManager = DockerManager()
+    # dockerManager.start(1, 'dockers')
 
     tmdb_feed = TMDbClient()
     input('ENTER')
     os.system(CLEAR_SYNTAXE)
     movie_id, movie_title, movie_notation = tmdb_feed.movieMenu()
     #  Saving image on HDFS (commands in Dockerfile, restarting container since /images binded to /hadoop/dfs/data)
-    dockerManager.pullHDFS(movie_id, movie_title)
+    # dockerManager.pullHDFS(movie_id, movie_title)
 
     # polarity mean by source
     data = elasticSearchClient.getData(movie_title)['hits']['hits']

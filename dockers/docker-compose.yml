@@ -1,6 +1,8 @@
 version: "3"
 
 services:
+
+# HADOOP
   namenode:
     image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
     container_name: namenode
@@ -60,8 +62,131 @@ services:
       - hadoop_historyserver:/hadoop/yarn/timeline
     env_file:
       - ./hadoop.env
+
+# BASE DE DONNEES
+  redis:
+    image: redis:latest
+    ports:
+      - 6379:6379
+    volumes:
+      - redis_data:/data
+    command: [ "redis-server"]
+  
+  mongo:
+    image: mongo
+    container_name: mongodb
+    hostname: mongodb
+    restart: unless-stopped
+    command: mongod --auth
+    ports:
+      - 27017:27017
+    env_file: .env
+    volumes:
+      - mongo:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DB_NAME}
+      MONGODB_DATA_DIR: ./volumes/db
+      MONGODB_LOG_DIR: /dev/null
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_USERNAME}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_PASSWORD}
+      ME_CONFIG_MONGODB_URL: ${MONGO_URL}
+    depends_on:
+      - mongo
+
+  # SCRIPTS
+  python:
+    container_name: python-twitter
+    # command: python3 ../../stream.py
+    build:
+      dockerfile: python-twitter/Dockerfile
+      context: ./
+    volumes:
+      - ./python-twitter:/usr/src
+      - ./.env:/usr/src/.env
+      - ./feeds:/usr/src/feeds
+      - ./tools:/usr/src/tools
+    environment:
+      UVICORN_PORT: 5001
+    ports:
+      - 5001:5001
+    depends_on:
+      - redis
+      - mongo
+    
+  python2:
+    container_name: python-tmdb
+    build:
+      dockerfile: python-tmdb/Dockerfile
+      context: ./
+    volumes:
+      - ./python-tmdb:/usr/src
+      - ./.env:/usr/src/.env
+      - ./feeds:/usr/src/feeds
+      - ./tools:/usr/src/tools
+    environment:
+      UVICORN_PORT: 5002
+    ports:
+      - 5002:5002
+    depends_on:
+      - mongo
+      - redis
+    
+  python3:
+    container_name: python-RSS
+    # command: python3 ../../stream.py
+    build:
+      dockerfile: python-RSS/Dockerfile
+      context: ./
+    volumes:
+      - ./python-RSS:/usr/src
+      - ./.env:/usr/src/.env
+      - ./feeds:/usr/src/feeds
+      - ./tools:/usr/src/tools
+    environment:
+      UVICORN_PORT: 5003
+    ports:
+      - 5003:5003
+    depends_on:
+      - mongo
+    
+  python4:
+    container_name: python-scheduler
+    build:
+      dockerfile: python-RSS/Dockerfile
+      context: ./
+    volumes:
+      - ./scheduler:/usr/src
+    depends_on:
+      - python
+      - python2
+      - python3
+
+  api-movies:
+    container_name: api-movies
+    build: 
+      context: ./
+      dockerfile: api/service_movies/DockerFile
+    volumes:
+      - ./api/service_movies:/usr/app
+    ports:
+      - 4000:5000
+    depends_on:
+      - mongo
+
+
   
 volumes:
   hadoop_namenode:
   hadoop_datanode:
   hadoop_historyserver:
+  mongo:
+  redis_data:

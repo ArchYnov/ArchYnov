@@ -1,0 +1,2 @@
+Update TwitterClient / RSSClient / TmdbClient avec mongo et collection et refaire queries
+(pour le moment tout est avec Elasticsearch)
