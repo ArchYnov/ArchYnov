@@ -181,8 +181,16 @@ services:
       - 4000:5000
     depends_on:
       - mongo
-
-
+  
+  interface:
+    container_name: interface
+    build: 
+      context: ./
+      dockerfile: interface/Dockerfile
+    ports:
+      - 8080:3000
+    depends_on:
+      - api-movies
   
 volumes:
   hadoop_namenode:
