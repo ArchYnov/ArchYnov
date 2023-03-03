@@ -157,6 +157,35 @@ services:
       - 5003:5003
     depends_on:
       - mongo
+  
+  tmdb-producer:
+    container_name: tmdb-producer
+    restart: on-failure
+    command: python3 ./tmdb_producer.py
+    build:
+      dockerfile: ./Dockerfile
+      context: ./kafka/producer
+    volumes:
+      - ./kafka/producer:/usr/src
+      - ./.env:/usr/src/.env
+    depends_on:
+      kafka:
+        condition: service_healthy
+      
+  
+  tmdb-consumer:
+    container_name: tmdb-consumer
+    restart: on-failure
+    build:
+      dockerfile: kafka/consumer/Dockerfile
+      context: ./
+    depends_on:
+      - mongo
+      - tmdb-producer
+    volumes:
+      - ./kafka/consumer:/usr/src
+      - ./.env:/usr/src/.env
+      - ./tools:/usr/src/tools
     
   python4:
     container_name: python-scheduler
@@ -181,6 +210,45 @@ services:
       - 4000:5000
     depends_on:
       - mongo
+  
+  
+  # ======================
+# Kafka
+# ======================
+  kafka:
+    image: confluentinc/cp-kafka
+    container_name: kafka
+    depends_on:
+      - zookeeper
+      - python
+      - python2
+      - python3
+    environment:
+      KAFKA_CREATE_TOPICS: tmdb,twitter,rss
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 100
+    healthcheck:
+      test: ["CMD", "bash", "-c", "unset", "JMX_PORT", ";", "/bin/kafka-topics.sh", "--bootstrap-server", "localhost:29092", "--list"]
+      interval: 20s
+      timeout: 10s
+      retries: 4
+    ports:
+      - 29092:29092
+      - 9092:9092
+      - 30001:30001
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
 
 
   
