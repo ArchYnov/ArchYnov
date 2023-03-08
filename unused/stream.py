@@ -5,7 +5,7 @@ from feeds.tmdbClient import TMDbClient
 from feeds.rssClient import RSSClient
 from tools.elasticSearch import ElasticSearchClient
 from tools.sentimentAnalysis import SentimentAnalysis
-from dockers.app import DockerManager
+# from dockers.app import DockerManager
 
 TWITTER_MAX_FETCH = 50
 
@@ -27,8 +27,8 @@ def main():
         'screenrant': 'https://screenrant.com/feed/',
     })
 
-    dockerManager = DockerManager()
-    dockerManager.start(1, 'dockers')
+#     dockerManager = DockerManager()
+#     dockerManager.start(1, 'dockers')
 
     while True:
         print('Start hour fetch !')
@@ -36,8 +36,9 @@ def main():
         for movie in tmdb_feed.fetchNewMovies():
             twitter_feed.pushNewTweets(query=movie['original_title'], count=TWITTER_MAX_FETCH)
             pic_path = tmdb_feed.downloadPic(movie['id'])
-            dockerManager.createHDFSDirectory() 
-            dockerManager.picToHDFS(pic_path)
+            # ENVOYER REQUETE HTTP AVEC pic_path
+            # dockerManager.createHDFSDirectory() 
+            # dockerManager.picToHDFS(pic_path)
         print('End hour fetch !')
         sleep(3600)
 

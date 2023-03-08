@@ -1,0 +1,67 @@
+@startuml diagram
+' USERS
+actor       User          as user
+' DATAVIZ
+participant Dataviz       as dataviz 
+' API
+participant Api           as api
+' SCRIPTS
+participant Scheduler     as schedule
+participant MovieAPI      as movieAPI
+participant RssApi        as rssApi
+participant TweetApi      as tweetApi
+' SOURCES
+collections TMDB          as tmdb
+collections RSSfeeds      as rssFeeds
+collections Twitter       as twitter
+' ML
+participant Pipeline      as pipeline
+' DATABASES
+database    MongoDB       as mongodb
+database    Redis         as redis
+' ACTIONS
+activate schedule
+schedule ->   schedule : every X minutes 
+schedule ->   movieAPI : Fetch new movies's infos
+activate movieAPI
+movieAPI <--> redis    : Fetch api key
+movieAPI <->  tmdb     : Fetch movies's infos
+movieAPI ->   mongodb  : Store movies's infos
+schedule <-   movieAPI : Send "finished signal"
+deactivate movieAPI
+schedule ->   tweetApi : Fetch tweets of movies
+activate tweetApi
+tweetApi <--> redis    : Fetch api key
+tweetApi <->  mongodb  : Fetch movies's title's list 
+tweetApi <->  twitter  : Fetch tweets
+tweetApi ->   mongodb  : Store tweets
+schedule <-   tweetApi : Send "finished signal"
+deactivate tweetApi
+schedule ->   rssApi   : Fetch articles from sites
+activate rssApi
+rssApi   ->   mongodb  : Store articles
+rssApi   <->  rssFeeds : Fetch last articles
+rssApi   ->   schedule : Send "finished signal"
+deactivate rssApi
+schedule ->   pipeline : ask to recaculate predictions
+activate pipeline
+pipeline ->   mongodb  : Fetch datas
+pipeline ->   mongodb  : Fetch datas
+pipeline ->   pipeline : Do things (Sentiment analysis...)
+pipeline ->   mongodb  : Store result of thoses things
+pipeline ->   mongodb  : Store result of thoses things
+schedule <-   pipeline : Send "finished signal"
+deactivate pipeline
+user    ->    dataviz  : Open website
+activate user
+activate dataviz
+dataviz ->    api      : Fetch datas
+activate api
+api     ->    mongodb  : Fetch datas
+api     ->    dataviz  : Send back datas
+deactivate api
+dataviz ->    dataviz  : Do thing with datas
+dataviz ->    user     : Look at Waow graphs !
+deactivate dataviz
+deactivate user 
+@enduml

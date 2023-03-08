@@ -1,6 +1,8 @@
 version: "3"
 
 services:
+
+# HADOOP
   namenode:
     image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
     container_name: namenode
@@ -60,8 +62,211 @@ services:
       - hadoop_historyserver:/hadoop/yarn/timeline
     env_file:
       - ./hadoop.env
+
+# BASE DE DONNEES
+  redis:
+    image: redis:latest
+    ports:
+      - 6379:6379
+    volumes:
+      - redis_data:/data
+    command: [ "redis-server"]
+  
+  mongo:
+    image: mongo
+    container_name: mongodb
+    hostname: mongodb
+    restart: unless-stopped
+    command: mongod --auth
+    ports:
+      - 27017:27017
+    env_file: .env
+    volumes:
+      - mongo:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DB_NAME}
+      MONGODB_DATA_DIR: ./volumes/db
+      MONGODB_LOG_DIR: /dev/null
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_USERNAME}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_PASSWORD}
+      ME_CONFIG_MONGODB_URL: ${MONGO_URL}
+    depends_on:
+      - mongo
+
+  # SCRIPTS
+  python:
+    container_name: python-twitter
+    # command: python3 ../../stream.py
+    build:
+      dockerfile: python-twitter/Dockerfile
+      context: ./
+    volumes:
+      - ./python-twitter:/usr/src
+      - ./.env:/usr/src/.env
+      - ./feeds:/usr/src/feeds
+      - ./tools:/usr/src/tools
+    environment:
+      UVICORN_PORT: 5001
+    ports:
+      - 5001:5001
+    depends_on:
+      - redis
+      - mongo
+    
+  python2:
+    container_name: python-tmdb
+    build:
+      dockerfile: python-tmdb/Dockerfile
+      context: ./
+    volumes:
+      - ./python-tmdb:/usr/src
+      - ./.env:/usr/src/.env
+      - ./feeds:/usr/src/feeds
+      - ./tools:/usr/src/tools
+    environment:
+      UVICORN_PORT: 5002
+    ports:
+      - 5002:5002
+    depends_on:
+      - mongo
+      - redis
+    
+  python3:
+    container_name: python-RSS
+    # command: python3 ../../stream.py
+    build:
+      dockerfile: python-RSS/Dockerfile
+      context: ./
+    volumes:
+      - ./python-RSS:/usr/src
+      - ./.env:/usr/src/.env
+      - ./feeds:/usr/src/feeds
+      - ./tools:/usr/src/tools
+    environment:
+      UVICORN_PORT: 5003
+    ports:
+      - 5003:5003
+    depends_on:
+      - mongo
+  
+  tmdb-producer:
+    container_name: tmdb-producer
+    restart: on-failure
+    command: python3 ./tmdb_producer.py
+    build:
+      dockerfile: ./Dockerfile
+      context: ./kafka/producer
+    volumes:
+      - ./kafka/producer:/usr/src
+      - ./.env:/usr/src/.env
+    depends_on:
+      kafka:
+        condition: service_healthy
+      
+  
+  tmdb-consumer:
+    container_name: tmdb-consumer
+    restart: on-failure
+    build:
+      dockerfile: kafka/consumer/Dockerfile
+      context: ./
+    depends_on:
+      - mongo
+      - tmdb-producer
+    volumes:
+      - ./kafka/consumer:/usr/src
+      - ./.env:/usr/src/.env
+      - ./tools:/usr/src/tools
+    
+  python4:
+    container_name: python-scheduler
+    build:
+      dockerfile: python-RSS/Dockerfile
+      context: ./
+    volumes:
+      - ./scheduler:/usr/src
+    depends_on:
+      - python
+      - python2
+      - python3
+
+  api-movies:
+    container_name: api-movies
+    build: 
+      context: ./
+      dockerfile: api/service_movies/DockerFile
+    volumes:
+      - ./api/service_movies:/usr/app
+    ports:
+      - 4000:5000
+    depends_on:
+      - mongo
+  
+  
+  # ======================
+# Kafka
+# ======================
+  kafka:
+    image: confluentinc/cp-kafka
+    container_name: kafka
+    depends_on:
+      - zookeeper
+      - python
+      - python2
+      - python3
+    environment:
+      KAFKA_CREATE_TOPICS: tmdb,twitter,rss
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 100
+    healthcheck:
+      test: ["CMD", "bash", "-c", "unset", "JMX_PORT", ";", "/bin/kafka-topics.sh", "--bootstrap-server", "localhost:29092", "--list"]
+      interval: 20s
+      timeout: 10s
+      retries: 4
+    ports:
+      - 29092:29092
+      - 9092:9092
+      - 30001:30001
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+
+  
+  interface:
+    container_name: interface
+    build: 
+      context: ./
+      dockerfile: interface/Dockerfile
+    volumes:
+      - ./interface:/app
+    ports:
+      - 8080:3000
+    depends_on:
+      - api-movies
   
 volumes:
   hadoop_namenode:
   hadoop_datanode:
   hadoop_historyserver:
+  mongo:
+  redis_data:

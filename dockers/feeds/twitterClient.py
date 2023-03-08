@@ -2,9 +2,8 @@ from tweepy import OAuthHandler, API, Cursor
 from tweepy.errors import TweepyException
 from polyglot.detect import Detector
 
-
 class TwitterClient(object):
-    def __init__(self, db, db_pickle, sentimentModule=None, supported_languages=None):
+    def __init__(self, db, client_redis, supported_languages=None):
         """ 
         DESC : initiate varibles and set-up the tweepy class for later usage
 
@@ -13,18 +12,18 @@ class TwitterClient(object):
                 supported_language - only fetch certain languages (used for emoji conversion) (default is english) 
         """
         self.db = db
-        self.sa = sentimentModule
-        self.supported_languages = supported_languages 
-        if not self.supported_languages:
-            if sentimentModule:
-                self.supported_languages = sentimentModule.supported_languages
-            else:
-                self.supported_languages = ['en']
+        if supported_languages and type(supported_languages) == list:
+            self.supported_languages = supported_languages
+        else:
+            self.supported_languages = ['en']
 
         try:
-            self.auth = OAuthHandler(db_pickle.get('api_key'), db_pickle.get('api_key_secret'))
-            self.auth.set_access_token(db_pickle.get('access_token'), db_pickle.get('access_token_secret'))
+            key = ["api_key","api_key_secret","access_token","access_token_secret"]
+            tokens = client_redis.get_value_by_key(key)
+            self.auth = OAuthHandler(tokens['api_key'], tokens['api_key_secret'])
+            self.auth.set_access_token(tokens['access_token'], tokens['access_token_secret'])
             self.api = API(self.auth)
+            
         except:
             print('Error: Authentication Failed')
 
@@ -37,19 +36,18 @@ class TwitterClient(object):
         """
         actions = []
         for tweet in tweets:
-            pol = self.sa.calculatePolarity_baseFive(tweet.full_text) if self.sa else 'n/a'
             actions.append({
                 '_index': 'twitter',
                 '_id': tweet.id_str,
                 '_source': {
                     'date': tweet.created_at,
                     'text': tweet.full_text,
-                    'polarity': pol,
                     'nombre_retweet': tweet.retweet_count,
                     'nombre_like': tweet.favorite_count,
                 },
             })
-        self.db.insertData(actions)
+        self.db.insertOne("tweets", actions)
+        
 
     def deleteDb(self):
         """ 
@@ -82,7 +80,7 @@ class TwitterClient(object):
 
     def pushNewTweets(self, query, count):
         """ 
-        DESC : fetch tweets before sending formeted version of them to the DB
+        DESC : fetch tweets before sending formatted version of them to the DB
 
         IN   :  query - search input to fetch tweets
                 count - number of tweet to download ( default is 10 )
