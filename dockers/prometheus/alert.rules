@@ -1,0 +1,11 @@
+groups:
+- name: mon_groupe_d_alertes
+  rules:
+  - alert: job_non_en_marche
+    expr: absent(up{monitoring="true"})
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Un job ne fonctionne plus"
+      description: "Un job n'a pas été actif pendant plus de 1 minute."

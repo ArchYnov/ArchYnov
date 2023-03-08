@@ -1,0 +1,28 @@
+global:
+  scrape_interval: 15s
+  
+
+
+scrape_configs:
+  - job_name: 'mongo-express'
+    metrics_path: /
+    scheme: 'http'
+    static_configs:
+      - targets: ['mongo-express:8081']
+        labels:
+            monitoring: 'true'
+      
+  # - job_name: 'tmdb'
+  #   metrics_path: /fetchTmdb
+  #   scheme: 'http'
+  #   static_configs:
+  #     - targets: ['127.0.0.11:5002']
+  #       labels:
+  #           monitoring: 'true'
+
+rule_files:
+  - '/etc/prometheus/alert.rules'
+
+
+
+  
