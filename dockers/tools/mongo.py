@@ -36,15 +36,25 @@ class MongodbClient():
         return allCollection
     
 
-    def insertOne(self, name_collection, data):
+    def insertOne(self, name_collection, data,  checkDuplicates = []):
         """insert un element en base de données
 
         Args:
             name_collection (str): Name of the collection
             data (dict): data insert in bdd
+            checkDuplicates (list): columns check duplicates
         """
         collection = self.getCollection(name_collection)
-        collection.insert_one(data)  
+
+        # on creer notre critére pour recuperer les duplicates
+        findCriteria = {"$or": []}
+        for column in checkDuplicates:
+            findCriteria["$or"].append({column : data[column]})
+
+        data_duplicate = collection.find_one(findCriteria)
+        # Si la données n'existe pas dans la collection on insere
+        if not data_duplicate:
+            collection.insert_one(data)  
     
 
     def insertMany(self, name_collection, data, checkDuplicates = []) :
@@ -53,6 +63,7 @@ class MongodbClient():
         Args:
             name_collection (str): Name of the collection
             data (list): data insert in bdd
+            checkDuplicates (list): columns check duplicates
         """
         collection = self.getCollection(name_collection)
         findCriteria = {"$or" : []}
