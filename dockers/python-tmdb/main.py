@@ -30,11 +30,8 @@ import json
 from tools.redis import RedisClient
 
 app = FastAPI()
-
 client_redis = RedisClient()
-client_redis.create_key_value("api_key_tmdb", '678b941591dc9bdb6ec1352563253fdd')
 api_key = client_redis.get_value_by_key(["api_key_tmdb"])
-
 mongodb_client = MongodbClient()
 tmdb_feed = TMDbClient(mongo_client=mongodb_client, api_key=api_key['api_key_tmdb'])
 

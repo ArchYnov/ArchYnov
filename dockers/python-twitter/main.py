@@ -32,14 +32,8 @@ import uvicorn
 app = FastAPI()
 
 TWITTER_MAX_FETCH = 890
-# connect to redis
-client_redis = RedisClient()
-client_redis.create_key_value("api_key", 'MyjgoENpH5NcIaNklNzKrbcBD')
-client_redis.create_key_value("api_key_secret", 'OFcquJlUYOYaOlwcNbSS59cDzI7ovxLZn92hGmivypL4FahtNk')
-client_redis.create_key_value("access_token", '1377622154683019265-cbNJTqBWzPJ5CJDdUOVazLk518hOba')
-client_redis.create_key_value("access_token_secret", 'Qjo3HWA2DPz7pF2RjVgobTGG6m8OKtZLmiYBYYIfCZHoY')
-# client_redis.create_key_value("bearer_token", 'AAAAAAAAAAAAAAAAAAAAAPBNlgEAAAAAO1PAncTKlPq1BL2Zl%2FKMA7wJb%2Fk%3DhnyDOuxBoVSgZ6n3QIPPyEd0cnMSoVkt0tBXtxkrli5UJ7c5kz')
 
+client_redis = RedisClient()
 client_mongo = MongodbClient()
 
 key = ["api_key","api_key_secret","access_token","access_token_secret"]
