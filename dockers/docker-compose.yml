@@ -252,6 +252,18 @@ services:
 
 
   
+  interface:
+    container_name: interface
+    build: 
+      context: ./
+      dockerfile: interface/Dockerfile
+    volumes:
+      - ./interface:/app
+    ports:
+      - 8080:3000
+    depends_on:
+      - api-movies
+  
 volumes:
   hadoop_namenode:
   hadoop_datanode:

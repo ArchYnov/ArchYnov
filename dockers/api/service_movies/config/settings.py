@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     # MONGODB_URL: str = "mongodb://root:root@mongo:27017"
     # MONGODB_NAME: str = "ydays"
-    # MONGODB_COLLECTION: str = "movies"
+    # MONGODB_COLLECTION: str = "tmdb"
     MONGO_USERNAME: str
     MONGO_PASSWORD: str
     MONGO_DB_NAME: str
