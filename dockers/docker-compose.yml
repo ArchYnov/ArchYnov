@@ -1,10 +1,10 @@
 version: "3"
 
 networks:
-  - api : "bridge"
-  - databases : "bridge"
-  - ihm : "bridge"
-  - hadoop : "bridge"
+  api :
+  databases : 
+  ihm : 
+  hadoop : 
 
 volumes:
   hadoop_namenode:
@@ -169,9 +169,9 @@ services:
     depends_on:
       - mongo
       - redis
-      - hadoop
+      - datanode
     
-  python-RSS:
+  python-rss:
     container_name: python-RSS
     build:
       dockerfile: python-RSS/Dockerfile
@@ -225,9 +225,9 @@ services:
     volumes:
       - ./scheduler:/usr/src
     depends_on:
-      - python
-      - python2
-      - python3
+      - python-twitter
+      - python-tmdb
+      - python-rss
 
   api-movies:
     container_name: api-movies
@@ -242,7 +242,7 @@ services:
       - mongo
   
   
-  # ======================
+# ======================
 # Kafka
 # ======================
   kafka:
@@ -250,9 +250,9 @@ services:
     container_name: kafka
     depends_on:
       - zookeeper
-      - python
-      - python2
-      - python3
+      - python-twitter
+      - python-tmdb
+      - python-rss
     environment:
       KAFKA_CREATE_TOPICS: tmdb,twitter,rss
       KAFKA_BROKER_ID: 1
