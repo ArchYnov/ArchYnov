@@ -1,7 +1,19 @@
 version: "3"
 
-services:
+networks:
+  - api : "bridge"
+  - databases : "bridge"
+  - ihm : "bridge"
+  - hadoop : "bridge"
 
+volumes:
+  hadoop_namenode:
+  hadoop_datanode:
+  hadoop_historyserver:
+  mongo:
+  redis_data:
+
+services:
 # HADOOP
   namenode:
     image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
@@ -16,6 +28,8 @@ services:
       - CLUSTER_NAME=test
     env_file:
       - ./hadoop.env
+    networks:
+     - hadoop
 
   datanode:
     build:
@@ -33,6 +47,8 @@ services:
       SERVICE_PRECONDITION: "namenode:9870"
     env_file:
       - ./hadoop.env
+    networks:
+     - hadoop
   
   resourcemanager:
     image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.2.1-java8
@@ -42,6 +58,8 @@ services:
       SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode:9864"
     env_file:
       - ./hadoop.env
+    networks:
+     - hadoop
 
   nodemanager1:
     image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.2.1-java8
@@ -51,6 +69,8 @@ services:
       SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode:9864 resourcemanager:8088"
     env_file:
       - ./hadoop.env
+    networks:
+     - hadoop
   
   historyserver:
     image: bde2020/hadoop-historyserver:2.0.0-hadoop3.2.1-java8
@@ -62,15 +82,21 @@ services:
       - hadoop_historyserver:/hadoop/yarn/timeline
     env_file:
       - ./hadoop.env
+    networks:
+     - hadoop
 
 # BASE DE DONNEES
   redis:
     image: redis:latest
+    restart: unless-stopped
     ports:
       - 6379:6379
     volumes:
       - redis_data:/data
-    command: [ "redis-server"]
+    command: ["redis-server"]
+    networks:
+     - databases
+     - api
   
   mongo:
     image: mongo
@@ -89,6 +115,9 @@ services:
       MONGO_INITDB_DATABASE: ${MONGO_DB_NAME}
       MONGODB_DATA_DIR: ./volumes/db
       MONGODB_LOG_DIR: /dev/null
+    networks:
+     - databases
+     - api
 
   mongo-express:
     image: mongo-express
@@ -101,11 +130,12 @@ services:
       ME_CONFIG_MONGODB_URL: ${MONGO_URL}
     depends_on:
       - mongo
+    networks:
+     - databases
 
   # SCRIPTS
-  python:
+  python-twitter:
     container_name: python-twitter
-    # command: python3 ../../stream.py
     build:
       dockerfile: python-twitter/Dockerfile
       context: ./
@@ -122,7 +152,7 @@ services:
       - redis
       - mongo
     
-  python2:
+  python-tmdb:
     container_name: python-tmdb
     build:
       dockerfile: python-tmdb/Dockerfile
@@ -139,10 +169,10 @@ services:
     depends_on:
       - mongo
       - redis
+      - hadoop
     
-  python3:
+  python-RSS:
     container_name: python-RSS
-    # command: python3 ../../stream.py
     build:
       dockerfile: python-RSS/Dockerfile
       context: ./
@@ -158,7 +188,7 @@ services:
     depends_on:
       - mongo
     
-  python4:
+  python-scheduler:
     container_name: python-scheduler
     build:
       dockerfile: python-RSS/Dockerfile
@@ -183,10 +213,4 @@ services:
       - mongo
 
 
-  
-volumes:
-  hadoop_namenode:
-  hadoop_datanode:
-  hadoop_historyserver:
-  mongo:
-  redis_data:
+
