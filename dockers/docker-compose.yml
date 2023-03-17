@@ -88,10 +88,8 @@ services:
 
 # BASE DE DONNEES
   redis:
+    image: redis:latest
     container_name: redis
-    build:
-      context: ./
-      dockerfile: datanode/Dockerfile
     restart: unless-stopped
     command : ["redis-server"]
     ports:
@@ -257,6 +255,8 @@ services:
       - 4000:5000
     depends_on:
       - mongo
+    networks:
+      - kafka-network
   
   
 # ======================
@@ -289,6 +289,8 @@ services:
       - 29092:29092
       - 9092:9092
       - 30001:30001
+    networks:
+      - kafka-network
 
   zookeeper:
     image: confluentinc/cp-zookeeper
@@ -296,6 +298,8 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    networks:
+        - kafka-network
 
   interface:
     container_name: interface

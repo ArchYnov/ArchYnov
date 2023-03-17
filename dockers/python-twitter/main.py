@@ -21,7 +21,7 @@ NewRSS -> Every now and then new articles are posted on their respective website
 In term of database we use MongoDB (https://www.mongodb.com/), Elasticsearch (https://www.elastic.co/) and as we said before  HDFS (https://hadoop.apache.org/).
 """
 
-from tools.redis import RedisClient
+from tools.redis_client import RedisClient
 from tools.mongo import MongodbClient
 from feeds.twitterClient import TwitterClient
 from fastapi import FastAPI
@@ -33,7 +33,7 @@ app = FastAPI()
 
 TWITTER_MAX_FETCH = 890
 
-client_redis = RedisClient()
+client_redis = RedisClient(host="redis")
 client_mongo = MongodbClient()
 
 key = ["api_key","api_key_secret","access_token","access_token_secret"]
