@@ -3,7 +3,6 @@ from pydantic import BaseSettings
 
 # Project Directories
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-print(ROOT)
 
 class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
@@ -21,7 +20,4 @@ class Settings(BaseSettings):
 
 
 settings = Settings(_env_file=".env")
-
-print(settings.Config.env_file)
-
 print(settings)

@@ -9,12 +9,16 @@ class MovieRepository:
 
     def get_all(self):
         movies = [MovieModel(**movie) for movie in self._collection.find()]
-
         return movies
         
     def get_by_id(self, id):
         movie = self._collection.find_one({'id': id})
         return MovieModel(**movie)
+    
+    def count(self):
+        c = self._collection.count_documents({})
+        print(c)
+        return c
 
     # def create(self, movie: MovieSchema):
     #     new_movie = MovieModel(**movie.dict())
