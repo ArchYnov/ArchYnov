@@ -248,9 +248,9 @@ services:
     container_name: api-movies
     build: 
       context: ./
-      dockerfile: api/service_movies/DockerFile
+      dockerfile: api/app/DockerFile
     volumes:
-      - ./api/service_movies:/usr/app
+      - ./api/app:/usr/app
     ports:
       - 4000:5000
     depends_on:
