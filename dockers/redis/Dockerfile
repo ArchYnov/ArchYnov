@@ -1,16 +1,7 @@
 FROM redis:latest
-RUN apt-get update
-RUN apt-get install python3.6
-
-# create destination directory
-RUN mkdir -p /usr/src
-WORKDIR /usr/src
-RUN mkdir -p tools
-
-# copy files
-ADD redis/deploy.py ./deploy.py
-ADD tools/redis.py ./tools/redis.py
-
-RUN redis-server --daemonize yes
-RUN python3 deploy.py
-RUN redis-cli shutdown
+ADD redis/entrypoint.sh /tmp/entrypoint.sh
+ADD redis/init.sh /tmp/init.sh
+ADD redis/seed.txt /tmp/seed.txt
+RUN chmod -R 777 /tmp
+ENTRYPOINT ["/tmp/entrypoint.sh"]
+CMD ["redis-server"]

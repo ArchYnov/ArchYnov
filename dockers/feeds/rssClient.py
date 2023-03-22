@@ -64,7 +64,7 @@ class RSSClient(object):
                     'date': article['published_parsed'],
                 },
             })
-        self.db.insertData(actions)
+        self.db.insertMany("rss", actions, ['_id'])
 
     def deleteDb(self):
         """ 
@@ -72,16 +72,6 @@ class RSSClient(object):
         """
         for source, _ in self.urls.items():
             self.db.deleteData(source)
-
-    def alreadyExists(self, index, newID):
-        """ 
-        DESC : Makes shure we don't insert the same article twice
-
-        IN   : index - the name of the Elasticsearch index
-               newId - id from the RSS article to search in Db
-        OUT  : True if the article already exist, False if it don't
-        """
-        return self.db.ifExist(index, newID)
 
 
     def parsingHtml(self, content):
@@ -103,8 +93,7 @@ class RSSClient(object):
         for source, url in self.urls.items():
             articles = []
             for entry in self.getFeed(url).entries:
-                if not self.alreadyExists(source, entry['id']):
-                   articles.append(entry)
+                articles.append(entry)
             if articles:
                 print('{} new articles added in {}\'s index !'.format(len(articles), source))
                 feed.append((source, articles))
