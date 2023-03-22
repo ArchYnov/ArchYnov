@@ -50,11 +50,10 @@ async def fetchTwitter():
         OUT  : result of the request
     """
     # Fetch mongoDB movie list
-    testCol = client_mongo.getAllDocumentsFromCollection("tweets")
-    all_movies = [ ele["title"] for ele in testCol ]
-    print(all_movies)
+    testCol = client_mongo.getAllDocumentsFromCollection("tmdb")
+    all_movies = [ ele["original_title"] for ele in testCol ]
     for movie_name in all_movies:
-        twitter_feed.pushNewTweets(query=movie_name, count=TWITTER_MAX_FETCH)
+        twitter_feed.pushNewTweets(query=movie_name, count=10)
     return Response(
             status_code=200,
             content=json.dumps({"result": "sucess"}),
