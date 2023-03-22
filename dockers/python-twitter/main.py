@@ -21,7 +21,7 @@ NewRSS -> Every now and then new articles are posted on their respective website
 In term of database we use MongoDB (https://www.mongodb.com/), Elasticsearch (https://www.elastic.co/) and as we said before  HDFS (https://hadoop.apache.org/).
 """
 
-from tools.redis import RedisClient
+from tools.redis_client import RedisClient
 from tools.mongo import MongodbClient
 from feeds.twitterClient import TwitterClient
 from fastapi import FastAPI
@@ -32,14 +32,8 @@ import uvicorn
 app = FastAPI()
 
 TWITTER_MAX_FETCH = 890
-# connect to redis
-client_redis = RedisClient()
-client_redis.create_key_value("api_key", 'MyjgoENpH5NcIaNklNzKrbcBD')
-client_redis.create_key_value("api_key_secret", 'OFcquJlUYOYaOlwcNbSS59cDzI7ovxLZn92hGmivypL4FahtNk')
-client_redis.create_key_value("access_token", '1377622154683019265-cbNJTqBWzPJ5CJDdUOVazLk518hOba')
-client_redis.create_key_value("access_token_secret", 'Qjo3HWA2DPz7pF2RjVgobTGG6m8OKtZLmiYBYYIfCZHoY')
-# client_redis.create_key_value("bearer_token", 'AAAAAAAAAAAAAAAAAAAAAPBNlgEAAAAAO1PAncTKlPq1BL2Zl%2FKMA7wJb%2Fk%3DhnyDOuxBoVSgZ6n3QIPPyEd0cnMSoVkt0tBXtxkrli5UJ7c5kz')
 
+client_redis = RedisClient(host="redis")
 client_mongo = MongodbClient()
 
 key = ["api_key","api_key_secret","access_token","access_token_secret"]
