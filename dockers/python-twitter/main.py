@@ -50,7 +50,7 @@ async def fetchTwitter():
         OUT  : result of the request
     """
     # Fetch mongoDB movie list
-    testCol = client_mongo.getAllDocumentsFromCollection("testTwitter")
+    testCol = client_mongo.getAllDocumentsFromCollection("tweets")
     all_movies = [ ele["title"] for ele in testCol ]
     print(all_movies)
     for movie_name in all_movies:

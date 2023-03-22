@@ -88,8 +88,10 @@ services:
 
 # BASE DE DONNEES
   redis:
-    image: redis:latest
     container_name: redis
+    build:
+      dockerfile: redis/Dockerfile
+      context: ./
     restart: unless-stopped
     command : ["redis-server"]
     ports:
