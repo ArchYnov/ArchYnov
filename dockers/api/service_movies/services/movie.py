@@ -11,12 +11,15 @@ class MovieService:
 
     def get_by_id(self, id):
         return self.movie_repository.get_by_id(id)
+    
+    def count(self):
+        return self.movie_repository.count()
 
-    def create(self, movie):
-        return self.movie_repository.create(movie)
+    # def create(self, movie):
+    #     return self.movie_repository.create(movie)
 
-    def update(self, id, movie):
-        return self.movie_repository.update(id, movie)
+    # def update(self, id, movie):
+    #     return self.movie_repository.update(id, movie)
 
-    def delete(self, id):
-        return self.movie_repository.delete(id)
+    # def delete(self, id):
+    #     return self.movie_repository.delete(id)

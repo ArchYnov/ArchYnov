@@ -29,12 +29,9 @@ import uvicorn
 app = FastAPI()
 
 TWITTER_MAX_FETCH = 50
-# db_pickle.set('api_key', 'lQQaJPtSdyKab6zyi03lHSanu') 
-# db_pickle.set('api_key_secret', 'texLfA0KI0VW428WMiPW5motO0z8PURFKvrJz0amktmGd0c3yK') 
-# db_pickle.set('access_token', '1377622154683019265-RnmvsG8dt06VAdOvlcHhEaYZs6lVD0') 
-# db_pickle.set('access_token_secret', 'SvWonpPDxsE3hNUfj2lrPjEvGb2Xj61tiJMWon0EKdEeg')
+
 mongodb_client = MongodbClient()
-rss_feed = RSSClient(mongodb_client, {
+rss_feed = RSSClient(db=mongodb_client, urls={
         'allocinesemaine': 'http://rss.allocine.fr/ac/cine/cettesemaine',
         'allocineaffiche': 'http://rss.allocine.fr/ac/cine/alaffiche',
         'screenrant': 'https://screenrant.com/feed/',

@@ -46,7 +46,7 @@ class TwitterClient(object):
                     'nombre_like': tweet.favorite_count,
                 },
             })
-        self.db.insertOne("tweets", actions)
+        self.db.insertMany("tweets", actions, ['_id'])
         
 
     def deleteDb(self):

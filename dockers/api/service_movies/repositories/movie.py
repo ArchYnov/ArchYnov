@@ -5,18 +5,20 @@ from models import MovieModel
 
 class MovieRepository:
     def __init__(self, db):
-        self.db = db
+        self._collection = db['tmdb']
 
     def get_all(self):
-        movies = [MovieModel(**movie) for movie in self.db.movies.find()]
-        # collection = self.db.movies.find()
-        print('MovieRepository', movies)
+        movies = [MovieModel(**movie) for movie in self._collection.find()]
         return movies
         
-
-    # def get_by_id(self, id):
-    #     movie = self.db.query(MovieModel).filter(MovieModel.id == id).first()
-    #     return movie
+    def get_by_id(self, id):
+        movie = self._collection.find_one({'id': id})
+        return MovieModel(**movie)
+    
+    def count(self):
+        c = self._collection.count_documents({})
+        print(c)
+        return c
 
     # def create(self, movie: MovieSchema):
     #     new_movie = MovieModel(**movie.dict())
