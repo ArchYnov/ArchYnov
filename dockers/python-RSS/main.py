@@ -32,9 +32,8 @@ TWITTER_MAX_FETCH = 50
 
 mongodb_client = MongodbClient()
 rss_feed = RSSClient(db=mongodb_client, urls={
-        'allocinesemaine': 'http://rss.allocine.fr/ac/cine/cettesemaine',
-        'allocineaffiche': 'http://rss.allocine.fr/ac/cine/alaffiche',
-        'screenrant': 'https://screenrant.com/feed/',
+        "allocineaffiche": "https://www.allocine.fr/rss/news-cine.xml",
+        "screenrant": "https://screenrant.com/feed/",
     })
 
 @app.get("/fetchRSS")

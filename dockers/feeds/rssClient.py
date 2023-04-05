@@ -81,7 +81,7 @@ class RSSClient(object):
         IN   : content - HTML content
         OUT  : raw text
         """
-        return BeautifulSoup(content, 'lxml').find_all('p')[0].text.split(' - ')[1]
+        return BeautifulSoup(content, 'lxml').find_all('p')[0].text
 
     def getArticlesFromRSS(self):
         """ 
