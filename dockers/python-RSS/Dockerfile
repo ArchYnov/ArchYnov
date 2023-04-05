@@ -6,7 +6,7 @@ WORKDIR /usr/src
 RUN mkdir dockers
 
 # copy files
-ADD python-tmdb/requirements.txt ./dockers/requirements.txt
+ADD python-RSS/requirements.txt ./dockers/requirements.txt
 ADD python-RSS/main.py ./dockers/main.py
 
 RUN pip3 install -r ./dockers/requirements.txt
