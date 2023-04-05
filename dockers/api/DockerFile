@@ -1,9 +1,8 @@
 FROM python:3.10
 
-WORKDIR /usr/app
+WORKDIR /app
 
-# ADD ./api/service_movies .
-ADD ./api/app/requirements.txt .
+COPY api/. /app/
 RUN pip install -r requirements.txt
 
 EXPOSE 5000

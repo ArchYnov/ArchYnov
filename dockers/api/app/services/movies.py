@@ -1,5 +1,5 @@
-from db.mongodb import Mongo
-from api.models.movies import PyObjectId, MovieModel
+from mongodb import Mongo
+from app.models.movies import PyObjectId
 
 class MovieService():
     def __init__(self, mongo: Mongo):
