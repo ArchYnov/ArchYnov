@@ -1,21 +1,25 @@
 version: "3"
 
 networks:
-  api :
-  databases : 
-  ihm : 
-  hadoop : 
-  kafka-network :
+  api:
+  databases:
+  ihm:
+  hadoop:
+  kafka-network:
+
 
 volumes:
+  # HADOOP
   hadoop_namenode:
   hadoop_datanode:
   hadoop_historyserver:
+  # DATABASES
   mongo:
   redis_data:
 
+
 services:
-# HADOOP
+  # HADOOP
   namenode:
     image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
     container_name: namenode
@@ -29,28 +33,18 @@ services:
       - CLUSTER_NAME=test
     env_file:
       - ./hadoop.env
-    networks:
-     - hadoop
 
   datanode:
-    build:
-      context: ./
-      dockerfile: datanode/Dockerfile
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
     container_name: datanode
     restart: always
-    ports:
-      - 5000:5000
     volumes:
       - hadoop_datanode:/hadoop/dfs/data
-      - ../images:/home
-      - ./api:/app
     environment:
       SERVICE_PRECONDITION: "namenode:9870"
     env_file:
       - ./hadoop.env
-    networks:
-     - hadoop
-  
+
   resourcemanager:
     image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.2.1-java8
     container_name: resourcemanager
@@ -59,8 +53,6 @@ services:
       SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode:9864"
     env_file:
       - ./hadoop.env
-    networks:
-     - hadoop
 
   nodemanager1:
     image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.2.1-java8
@@ -70,9 +62,7 @@ services:
       SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode:9864 resourcemanager:8088"
     env_file:
       - ./hadoop.env
-    networks:
-     - hadoop
-  
+
   historyserver:
     image: bde2020/hadoop-historyserver:2.0.0-hadoop3.2.1-java8
     container_name: historyserver
@@ -83,24 +73,22 @@ services:
       - hadoop_historyserver:/hadoop/yarn/timeline
     env_file:
       - ./hadoop.env
-    networks:
-     - hadoop
 
-# BASE DE DONNEES
+  # DATABASES
   redis:
     container_name: redis
     build:
       dockerfile: redis/Dockerfile
       context: ./
     restart: unless-stopped
-    command : ["redis-server"]
+    command: [ "redis-server" ]
     ports:
       - 6379:6379
     volumes:
       - redis_data:/data
     networks:
-     - api
-  
+      - api
+
   mongo:
     image: mongo
     container_name: mongodb
@@ -119,9 +107,9 @@ services:
       MONGODB_DATA_DIR: ./volumes/db
       MONGODB_LOG_DIR: /dev/null
     networks:
-     - databases
-     - api
-     - kafka-network
+      - databases
+      - api
+      - kafka-network
 
   mongo-express:
     container_name: mongo-express
@@ -136,9 +124,9 @@ services:
     depends_on:
       - mongo
     networks:
-     - databases
+      - databases
 
-  # SCRIPTS
+  # PYTHON SCRIPTS
   python-twitter:
     container_name: python-twitter
     build:
@@ -156,10 +144,10 @@ services:
     depends_on:
       - redis
       - mongo
-    networks :
+    networks:
       - api
       - kafka-network
-    
+
   python-tmdb:
     container_name: python-tmdb
     build:
@@ -178,10 +166,10 @@ services:
       - mongo
       - redis
       - datanode
-    networks :
+    networks:
       - api
       - kafka-network
-    
+
   python-rss:
     container_name: python-RSS
     build:
@@ -198,10 +186,10 @@ services:
       - 5003:5003
     depends_on:
       - mongo
-    networks :
+    networks:
       - api
       - kafka-network
-  
+
   tmdb-producer:
     container_name: tmdb-producer
     restart: on-failure
@@ -217,7 +205,7 @@ services:
         condition: service_healthy
     networks:
       - kafka-network
-      
+
   tmdb-consumer:
     container_name: tmdb-consumer
     restart: on-failure
@@ -233,7 +221,7 @@ services:
       - ./tools:/usr/src/tools
     networks:
       - kafka-network
-    
+
   python-scheduler:
     container_name: python-scheduler
     build:
@@ -248,7 +236,7 @@ services:
 
   api-movies:
     container_name: api-movies
-    build: 
+    build:
       context: ./
       dockerfile: api/app/DockerFile
     volumes:
@@ -259,11 +247,8 @@ services:
       - mongo
     networks:
       - kafka-network
-  
-  
-# ======================
-# Kafka
-# ======================
+
+  # KAFKA
   kafka:
     image: confluentinc/cp-kafka
     container_name: kafka
@@ -283,7 +268,19 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 100
     healthcheck:
-      test: ["CMD", "bash", "-c", "unset", "JMX_PORT", ";", "/bin/kafka-topics.sh", "--bootstrap-server", "localhost:29092", "--list"]
+      test:
+        [
+          "CMD",
+          "bash",
+          "-c",
+          "unset",
+          "JMX_PORT",
+          ";",
+          "/bin/kafka-topics.sh",
+          "--bootstrap-server",
+          "localhost:29092",
+          "--list"
+        ]
       interval: 20s
       timeout: 10s
       retries: 4
@@ -301,11 +298,11 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     networks:
-        - kafka-network
+      - kafka-network
 
   interface:
     container_name: interface
-    build: 
+    build:
       context: ./
       dockerfile: interface/Dockerfile
     volumes:
@@ -314,5 +311,3 @@ services:
       - 8080:3000
     depends_on:
       - api-movies
-  
-
