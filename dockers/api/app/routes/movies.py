@@ -1,8 +1,8 @@
 from typing import List
 from fastapi import APIRouter, Depends, Request, Response, status
 
-from api.models.movies import MovieModel
-from api.services.movies import MovieService
+from app.models.movies import MovieModel
+from app.services.movies import MovieService
 
 router = APIRouter(prefix="/movies", tags=["movies"])
 

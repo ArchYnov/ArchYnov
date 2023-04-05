@@ -1,7 +1,7 @@
 from fastapi import Depends, FastAPI
-from api.routes.movies import router as movies_router
-from db.mongodb import Mongo
-from settings.config import Settings
+from app.routes.movies import router as movies_router
+from mongodb import Mongo
+from config import Settings
 
 
 settings = Settings()
@@ -21,9 +21,4 @@ async def shutdown():
     await app.mongodb_client.close()
     print("Disconnected from the MongoDB database!")
 
-# app.version(app.config.API_V1_STR)
-# app.include_router(movies_router, prefix="/movies", tags=["movies"], dependencies=[Depends(app.mongodb_client.get_client())])
-app.include_router(movies_router, prefix=app.config.API_V1_STR, tags=["v1"])
-
-
-# print(app.routes)
+app.include_router(movies_router, prefix=app.config.API_PREFIX, tags=["v1"])
