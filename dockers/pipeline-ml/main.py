@@ -24,6 +24,7 @@ from tools.mongo import MongodbClient
 from transformers import pipeline
 
 client_mongo = MongodbClient()
+sentiment_pipeline = pipeline("sentiment-analysis")
 
 def main():
     # set query to fetch the documents where Sentiment Analysis isn't defined
@@ -35,7 +36,6 @@ def main():
 
     print("Fetch done !")
 
-    sentiment_pipeline = pipeline("sentiment-analysis")
     tweet_analysed = sentiment_pipeline([ele[1] for ele in tweets])
     rss_analysed = sentiment_pipeline([ele[1] for ele in rss_articles])
 
