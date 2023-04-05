@@ -47,7 +47,11 @@ def main():
     print(f'Added sentiment analysis for {len(tweet_analysed)} tweets and {len(rss_analysed)} rss articles.')
     return
 
-schedule.every(1).minutes.do(main)
+schedule.every(15).minutes.do(main)
+
+while True:
+    schedule.run_pending()
+    time.sleep(1)
 
 if __name__ == '__main__':
     main()
