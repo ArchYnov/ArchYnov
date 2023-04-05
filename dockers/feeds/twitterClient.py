@@ -22,7 +22,7 @@ class TwitterClient(object):
             tokens = client_redis.get_value_by_key(key)
             self.auth = OAuthHandler(tokens['api_key'], tokens['api_key_secret'])
             self.auth.set_access_token(tokens['access_token'], tokens['access_token_secret'])
-            self.api = API(self.auth)
+            self.api = API(self.auth, wait_on_rate_limit=True)
             
         except:
             print('Error: Authentication Failed')
@@ -45,10 +45,10 @@ class TwitterClient(object):
                     'nombre_retweet': tweet.retweet_count,
                     'nombre_like': tweet.favorite_count,
                 },
+                '_sentiment_analysis' : 'n/a'
             })
         self.db.insertMany("tweets", actions, ['_id'])
         
-
     def deleteDb(self):
         """ 
         DESC : ask the ElasticSearch db to delete every entries that came from twitter 
@@ -65,8 +65,7 @@ class TwitterClient(object):
         """
         tweets = []
         try:
-            for tweet in Cursor(self.api.search_tweets, q=query, 
-                            tweet_mode='extended').items(count):
+            for tweet in Cursor(self.api.search_tweets, q=query, tweet_mode='extended').items(count):
                 language=Detector(tweet.full_text, quiet=True).language.code
                 if language in self.supported_languages:
                     if tweet.retweet_count:

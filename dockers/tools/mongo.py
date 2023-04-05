@@ -40,9 +40,9 @@ class MongodbClient():
         """insert un element en base de données
 
         Args:
-            name_collection (str): Name of the collection
-            data (dict): data insert in bdd
-            checkDuplicates (list): columns check duplicates
+            name_collection (str)   : Name of the collection
+            data (dict)             : data insert in bdd
+            checkDuplicates (list)  : columns check duplicates
         """
         collection = self.getCollection(name_collection)
 
@@ -61,9 +61,9 @@ class MongodbClient():
         """insert plusieurs elements en base de données
 
         Args:
-            name_collection (str): Name of the collection
-            data (list): data insert in bdd
-            checkDuplicates (list): columns check duplicates
+            name_collection (str)   : Name of the collection
+            data (list)             : data insert in bdd
+            checkDuplicates (list)  : columns check duplicates
         """
         collection = self.getCollection(name_collection)
         findCriteria = {"$or" : []}
@@ -82,3 +82,28 @@ class MongodbClient():
         
         if dataToInsert :
             collection.insert_many(dataToInsert) 
+
+    def get_documents(self, collection:object, criterion:dict = {}):
+        """get documents from collection
+
+        Args:
+            collection (str)    : name of collection
+            criterion (dict)    : criterion for mongo find
+
+        Returns:
+            documents: mongo query return
+        """
+        return [[document['_id'], document['_source']['text']] for document in self.db[collection].find(criterion)]
+    
+    def update_one(self, collection:str, query:dict, values:dict):
+        """update documents from collection
+
+        Args:
+            collection (str)    : name of collection
+            query (dict)        : query to find the document to update
+            values (dict)       : $set to update the value of a property
+
+        Returns:
+            documents: mongo query status return
+        """
+        return self.db[collection].update_one(query, values)
