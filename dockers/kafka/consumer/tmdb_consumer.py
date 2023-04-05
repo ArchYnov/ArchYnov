@@ -16,6 +16,7 @@ for value in consumer:
     # on convertit les datas envoyer par le consumer bytes -> dict
     data = loads(value.value.decode("utf-8"))
     try:
+        print(data)
         MONGODB_CLIENT.insertOne("tmdb", data, CHECK_DUPLICATES)
         print("insertion en base réussis")
     except:

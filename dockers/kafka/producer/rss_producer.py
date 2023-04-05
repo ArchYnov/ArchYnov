@@ -8,11 +8,17 @@ producer = KafkaProducer(bootstrap_servers="kafka:29092",value_serializer=lambda
 while True:
     try:
         # on recupere le content de la route fetchTmdb que l'on convertit de bytes -> list(dict)
-        contents = requests.get('http://python-tmdb:5002/fetchTmdb').content
+        contents = requests.get('http://python-rss:5003/fetchRSS').content
         contents = loads(contents.decode("utf-8"))
-        for content in contents["result"]:
-            producer.send("tmdb", content)
+        for source, articles in contents:
+            data = {"source": source, "articles": articles}
+            producer.send("rss", data)
     except:
         print("erreur lors de la récupération de l'api")
     # A MODIFIER, on veut pas recuperer les films toutes les 5 secondes
     sleep(10)
+
+
+
+# for source, articles in self.getArticlesFromRSS():
+#             self.insertDb(source, articles)
