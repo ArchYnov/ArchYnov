@@ -1,79 +1,6 @@
 version: "3"
 
-networks:
-  api:
-  databases:
-  ihm:
-  hadoop:
-  kafka-network:
-
-
-volumes:
-  # HADOOP
-  hadoop_namenode:
-  hadoop_datanode:
-  hadoop_historyserver:
-  # DATABASES
-  mongo:
-  redis_data:
-
-
 services:
-  # HADOOP
-  namenode:
-    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
-    container_name: namenode
-    restart: always
-    ports:
-      - 9870:9870
-      - 9000:9000
-    volumes:
-      - hadoop_namenode:/hadoop/dfs/name
-    environment:
-      - CLUSTER_NAME=test
-    env_file:
-      - ./hadoop.env
-
-  datanode:
-    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
-    container_name: datanode
-    restart: always
-    volumes:
-      - hadoop_datanode:/hadoop/dfs/data
-    environment:
-      SERVICE_PRECONDITION: "namenode:9870"
-    env_file:
-      - ./hadoop.env
-
-  resourcemanager:
-    image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.2.1-java8
-    container_name: resourcemanager
-    restart: always
-    environment:
-      SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode:9864"
-    env_file:
-      - ./hadoop.env
-
-  nodemanager1:
-    image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.2.1-java8
-    container_name: nodemanager
-    restart: always
-    environment:
-      SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode:9864 resourcemanager:8088"
-    env_file:
-      - ./hadoop.env
-
-  historyserver:
-    image: bde2020/hadoop-historyserver:2.0.0-hadoop3.2.1-java8
-    container_name: historyserver
-    restart: always
-    environment:
-      SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode:9864 resourcemanager:8088"
-    volumes:
-      - hadoop_historyserver:/hadoop/yarn/timeline
-    env_file:
-      - ./hadoop.env
-
   # DATABASES
   redis:
     container_name: redis
@@ -134,7 +61,6 @@ services:
       context: ./
     volumes:
       - ./python-twitter:/usr/src
-      - ./.env:/usr/src/.env
       - ./feeds:/usr/src/feeds
       - ./tools:/usr/src/tools
     environment:
@@ -155,7 +81,6 @@ services:
       context: ./
     volumes:
       - ./python-tmdb:/usr/src
-      - ./.env:/usr/src/.env
       - ./feeds:/usr/src/feeds
       - ./tools:/usr/src/tools
     environment:
@@ -165,7 +90,6 @@ services:
     depends_on:
       - mongo
       - redis
-      - datanode
     networks:
       - api
       - kafka-network
@@ -177,7 +101,6 @@ services:
       context: ./
     volumes:
       - ./python-RSS:/usr/src
-      - ./.env:/usr/src/.env
       - ./feeds:/usr/src/feeds
       - ./tools:/usr/src/tools
     environment:
@@ -199,7 +122,6 @@ services:
       context: ./kafka/producer
     volumes:
       - ./kafka/producer:/usr/src
-      - ./.env:/usr/src/.env
     depends_on:
       kafka:
         condition: service_healthy
@@ -217,12 +139,11 @@ services:
       - tmdb-producer
     volumes:
       - ./kafka/consumer:/usr/src
-      - ./.env:/usr/src/.env
       - ./tools:/usr/src/tools
     networks:
       - kafka-network
 
-  python-scheduler:
+  python-scheduler: 
     container_name: python-scheduler
     build:
       dockerfile: python-RSS/Dockerfile
@@ -311,3 +232,16 @@ services:
       - 8080:3000
     depends_on:
       - api-movies
+
+
+networks:
+  api:
+  databases:
+  ihm:
+  kafka-network:
+
+
+volumes:
+  # DATABASES
+  mongo:
+  redis_data:

@@ -2,7 +2,6 @@ FROM python:3.10
 
 WORKDIR /usr/app
 
-# ADD ./api/service_movies .
 ADD ./api/service_movies/requirements.txt .
 RUN pip install -r requirements.txt
 
