@@ -103,5 +103,4 @@ class RSSClient(object):
         """ 
         DESC : Main function, that get RSS data before sending them to the DB 
         """
-        for source, articles in self.getArticlesFromRSS():
-            self.insertDb(source, articles)
+        return self.getArticlesFromRSS()

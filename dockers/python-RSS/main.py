@@ -41,5 +41,6 @@ async def fetchRSS():
         IN   : None
         OUT  : result of the request
     """
-    rss_feed.pushNewArticles()
-    return 200
+    # for source, articles in self.getArticlesFromRSS():
+#             self.insertDb(source, articles)
+    return rss_feed.pushNewArticles()
