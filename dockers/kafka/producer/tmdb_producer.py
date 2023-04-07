@@ -8,7 +8,7 @@ producer = KafkaProducer(bootstrap_servers="kafka:29092",value_serializer=lambda
 while True:
     try:
         # on recupere le content de la route fetchTmdb que l'on convertit de bytes -> list(dict)
-        contents = requests.get('http://python-tmdb:5002/fetchTmdb').content
+        contents = requests.get('http://python-tmdb:5001/fetchTmdb').content
         contents = loads(contents.decode("utf-8"))
         for content in contents["result"]:
             producer.send("tmdb", content)

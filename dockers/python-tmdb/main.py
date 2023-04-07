@@ -41,14 +41,16 @@ async def fetchTmdb():
         OUT  : result of the request
     """
     try :
-        content = tmdb_feed.fetchNewMovies()
-        code = 200
+        return Response(
+        status_code=200,
+        content=json.dumps({"result": tmdb_feed.fetchNewMovies()}),
+        media_type="application/json"
+        )
     except :
-        code = 500
-        content = "erreur dans l'insertion des données",
-    
-    return Response(
-        status_code=code,
-        content=json.dumps({"result": content}),
+        return Response(
+        status_code=500,
+        content=json.dumps({"result": "erreur dans l'insertion des données"}),
         media_type="application/json"
     )
+    
+    
