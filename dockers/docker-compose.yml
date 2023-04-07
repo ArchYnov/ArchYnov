@@ -84,9 +84,9 @@ services:
       - ./feeds:/usr/src/feeds
       - ./tools:/usr/src/tools
     environment:
-      UVICORN_PORT: 5002
+      UVICORN_PORT: 5001
     ports:
-      - 5002:5002
+      - 5002:5001
     depends_on:
       - mongo
       - redis
@@ -104,9 +104,9 @@ services:
       - ./feeds:/usr/src/feeds
       - ./tools:/usr/src/tools
     environment:
-      UVICORN_PORT: 5003
+      UVICORN_PORT: 5001
     ports:
-      - 5003:5003
+      - 5003:5001
     depends_on:
       - mongo
     networks:
@@ -142,6 +142,16 @@ services:
       - ./tools:/usr/src/tools
     networks:
       - kafka-network
+
+  pipeline-ml:
+    container_name: pipeline-ml
+    build:
+      dockerfile: pipeline-ml/Dockerfile
+      context: ./
+    depends_on:
+      - mongo
+    networks:
+      - databases
 
   api-movies:
     container_name: api-movies
