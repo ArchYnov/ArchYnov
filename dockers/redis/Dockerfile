@@ -1,4 +1,4 @@
-FROM redis:latest
+FROM redis:7.0.10
 ADD redis/entrypoint.sh /tmp/entrypoint.sh
 ADD redis/init.sh /tmp/init.sh
 ADD redis/seed.txt /tmp/seed.txt

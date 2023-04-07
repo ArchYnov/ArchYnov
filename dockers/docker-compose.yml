@@ -17,7 +17,7 @@ services:
       - api
 
   mongo:
-    image: mongo
+    image: mongo:6.0.5
     container_name: mongodb
     hostname: mongodb
     restart: unless-stopped
@@ -40,7 +40,7 @@ services:
 
   mongo-express:
     container_name: mongo-express
-    image: mongo-express
+    image: mongo-express:1.0.0-alpha.4
     restart: always
     ports:
       - 8081:8081
@@ -169,7 +169,7 @@ services:
 
   # KAFKA
   kafka:
-    image: confluentinc/cp-kafka
+    image: confluentinc/cp-kafka:7.3.3
     container_name: kafka
     depends_on:
       - zookeeper
@@ -211,7 +211,7 @@ services:
       - kafka-network
 
   zookeeper:
-    image: confluentinc/cp-zookeeper
+    image: confluentinc/cp-zookeeper:7.3.3
     container_name: zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
