@@ -11,4 +11,4 @@ ADD kafka/consumer/tmdb_consumer.py ./dockers/tmdb_consumer.py
 
 RUN pip3 install -r ./dockers/requirements.txt
 
-CMD ["python3", "tmdb_consumer.py"]
+CMD ["python3", "-u", "tmdb_consumer.py"]
