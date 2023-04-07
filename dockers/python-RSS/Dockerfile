@@ -11,4 +11,4 @@ ADD python-RSS/main.py ./dockers/main.py
 
 RUN pip3 install -r ./dockers/requirements.txt
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5003"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5001"]
