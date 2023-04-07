@@ -27,31 +27,34 @@ client_mongo = MongodbClient()
 sentiment_pipeline = pipeline("sentiment-analysis")
 
 def main():
-    # set query to fetch the documents where Sentiment Analysis isn't defined
-    query = { '_sentiment_analysis': 'n/a' }
-    # send query
-    print("Fetching datas...")
-    tweets       = client_mongo.get_documents('tweets', query)
-    rss_articles = client_mongo.get_documents('rss', query)
+    while True: 
+        # set query to fetch the documents where Sentiment Analysis isn't defined
+        query = { '_sentiment_analysis': 'n/a' }
+        # send query
+        print("Fetching datas...")
+        tweets       = client_mongo.get_documents('tweets', query)
+        rss_articles = client_mongo.get_documents('rss', query)
 
-    print("Fetch done !")
+        print("Fetch done !")
 
-    tweet_analysed = sentiment_pipeline([ele[1] for ele in tweets])
-    rss_analysed = sentiment_pipeline([ele[1] for ele in rss_articles])
+        tweet_analysed = sentiment_pipeline([ele[1] for ele in tweets])
+        rss_analysed = sentiment_pipeline([ele[1] for ele in rss_articles])
 
-    for index, value in enumerate(tweets):
-        client_mongo.update_one('tweets', { "_id" : value[0] }, { "$set" :{ "_sentiment_analysis" : tweet_analysed[index] } })
-    for index, value in enumerate(rss_articles):
-        client_mongo.update_one('rss', { "_id" : value[0] }, { "$set" :{ "_sentiment_analysis" : rss_analysed[index] } })
+        for index, value in enumerate(tweets):
+            client_mongo.update_one('tweets', { "_id" : value[0] }, { "$set" : { "_sentiment_analysis" : tweet_analysed[index] } })
+        for index, value in enumerate(rss_articles):
+            client_mongo.update_one('rss', { "_id" : value[0] }, { "$set" : { "_sentiment_analysis" : rss_analysed[index] } })
 
-    print(f'Added sentiment analysis for {len(tweet_analysed)} tweets and {len(rss_analysed)} rss articles.')
-    return
+        print(f'Added sentiment analysis for {len(tweet_analysed)} tweets and {len(rss_analysed)} rss articles.')
+        time.sleep(900)
 
-schedule.every(15).minutes.do(main)
-
-while True:
-    schedule.run_pending()
-    time.sleep(1)
 
 if __name__ == '__main__':
     main()
+
+
+    
+
+
+
+

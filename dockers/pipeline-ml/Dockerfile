@@ -12,4 +12,4 @@ ADD tools/mongo.py ./dockers/pipeline-ml/tools/mongo.py
 
 RUN pip3 install -r ./dockers/requirements.txt
 
-CMD ["python3", "./dockers/pipeline-ml/main.py"]
+CMD ["python3", "-u", "./dockers/pipeline-ml/main.py"]
