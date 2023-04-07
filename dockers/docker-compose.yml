@@ -159,7 +159,7 @@ services:
       context: ./
       dockerfile: api/DockerFile
     volumes:
-      - ./api/app:/usr/app
+      - ./api:/usr/app
     ports:
       - 5000:5000
     depends_on:
@@ -169,7 +169,7 @@ services:
 
   # KAFKA
   kafka:
-    image: confluentinc/cp-kafka:7.3.3
+    image: confluentinc/cp-kafka
     container_name: kafka
     depends_on:
       - zookeeper
