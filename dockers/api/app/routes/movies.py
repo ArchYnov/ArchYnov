@@ -95,6 +95,25 @@ async def best(service: MovieService = Depends(deps_service), limit: int = 100, 
         "result": movies
     }
 
+@router.get("/new", response_description="Response new movies", status_code=status.HTTP_200_OK)
+async def new(service: MovieService = Depends(deps_service), limit: int = 100, offset: int = 0):
+    filters_dict = {}
+    sort_dict = [("release_date", DESCENDING)]
+    movies = [MovieModel(**movie) for movie in service.find_by_filter(filters_dict, sort_dict, limit, offset)]
+
+    if not movies:
+        return {
+            "description": "Response new movies",
+            "count": 0,
+            "result": []
+        }
+
+    return {
+        "description": "Response new movies",
+        "count": len(movies),
+        "result": movies
+    }
+
 @router.get("/number", response_description="Reponse number movies", status_code=status.HTTP_200_OK)
 async def number(service: MovieService = Depends(deps_service)):
 
