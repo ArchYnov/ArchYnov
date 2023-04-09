@@ -6,8 +6,10 @@ import { RiMovie2Line } from 'react-icons/ri'
 
 import { useScrollPosition } from '../hooks'
 
+import { NavLink } from 'react-router-dom'
+
 const Navbar = () => {
-    const [active, setActive] = useState('Home')
+    const [active, setActive] = useState('Accueil')
     const [toggle, setToggle] = useState(false)
 
     function classNames(...classes: string[]) {
@@ -32,16 +34,17 @@ const Navbar = () => {
             </div>
 
             <ul className="list-none sm:flex hidden justify-end items-center flex-1">
-                {navLinks.map((nav, index) => (
-                    <li
-                        key={nav.id}
-                        className={`font-poppins font-normal cursor-pointer text-[16px] mr-10 ${
-                            active === nav.title ? 'text-primary' : 'text-white'
-                        } `}
-                        onClick={() => setActive(nav.title)}
+                {navLinks.map((nav) => (
+                    <NavLink
+                        to={nav.path}
+                        className={({ isActive }) =>
+                            isActive
+                                ? 'text-primary font-poppins font-medium cursor-pointer text-[16px] mr-10'
+                                : 'text-white  font-poppins font-normal cursor-pointer text-[16px] mr-10'
+                        }
                     >
-                        <a href={`#${nav.id}`}>{nav.title}</a>
-                    </li>
+                        {nav.title}
+                    </NavLink>
                 ))}
             </ul>
             <div className="sm:hidden flex flex-1 justify-end items-center ">

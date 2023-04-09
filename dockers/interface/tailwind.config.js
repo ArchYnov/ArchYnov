@@ -9,7 +9,7 @@ module.exports = {
         primary: "#BB004B",
         secondary: "#FA7268",
         background: "#0f0e17",
-        background2: "#171726",
+        background_secondary: "#171726",
         neon: "hsl(329, 100%, 36%)",
       },
       fontFamily: {

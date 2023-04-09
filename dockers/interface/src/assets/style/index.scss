@@ -23,13 +23,26 @@
 .neon-btn:hover, .neon-btn:focus{
   background : hsl(329, 100%, 36%);
   // text-shadow: 0 0 0.125em hsl(240, 25%, 9% / 0.2), 0 0 0.45em currentColor;
-
   color : #0f0e17;
   text-shadow: none;
   box-shadow: 0 0 2em 0.5em hsl(329, 100%, 36%);
-
-
 }
+
+.neon-title{
+  color: white;
+  text-shadow: 0 0 0.125em hsl(240, 25%, 9% / 0.3), 0 0 0.45em currentColor;
+}
+
+.neon-title:hover{
+  color:hsl(329, 100%, 36%);
+  text-shadow: 0 0 0.125em hsl(240, 25%, 9% / 0.3), 0 0 0.45em currentColor;
+  transition: all 0.2s linear;
+}
+.neon-title-pink{
+  color:hsl(329, 100%, 36%);
+  text-shadow: 0 0 0.125em hsl(240, 25%, 9% / 0.3), 0 0 0.45em currentColor;
+}
+
 
 // .neon-btn::before{
 //   content: "";

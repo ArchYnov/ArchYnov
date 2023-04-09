@@ -4,7 +4,10 @@ import Root from './views/Root'
 import reportWebVitals from './reportWebVitals'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { Home, Movies } from './pages'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
+const queryClient = new QueryClient()
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 const router = createBrowserRouter([
     {
@@ -22,7 +25,13 @@ const router = createBrowserRouter([
         ],
     },
 ])
-root.render(<RouterProvider router={router} />)
+root.render(
+    <QueryClientProvider client={queryClient}>
+        {/* The rest of your application */}
+        <RouterProvider router={router} />
+        <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
+)
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

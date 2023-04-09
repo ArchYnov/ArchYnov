@@ -7,21 +7,18 @@ const Hero = () => {
     const handleClickScrollToCinema = () => {
         const element = document.getElementById('cinema')
         if (element) {
-            // 👇 Will scroll smoothly to the top of the next section
             element.scrollIntoView({ behavior: 'smooth' })
         }
     }
     const handleClickScrollToInformations = () => {
         const element = document.getElementById('informations')
         if (element) {
-            // 👇 Will scroll smoothly to the top of the next section
             element.scrollIntoView({ behavior: 'smooth' })
         }
     }
     const handleClickScrollToAnalyses = () => {
         const element = document.getElementById('analyses')
         if (element) {
-            // 👇 Will scroll smoothly to the top of the next section
             element.scrollIntoView({ behavior: 'smooth' })
         }
     }
@@ -30,20 +27,20 @@ const Hero = () => {
             <div className="flex flex-col justify-center pl-[10%]">
                 <h1
                     data-text="CINEMA"
-                    className="text-stroke text-white
-                    font-newake relative text-8xl mb-20 cursor-pointer w-fit"
+                    className="text-white
+                    font-newake relative text-8xl mb-20 cursor-pointer w-fit neon-title"
                     onClick={handleClickScrollToCinema}
                 >
                     CINÉMA
                 </h1>
                 <h1
-                    className="text-stroke text-white font-newake text-8xl mb-20 cursor-pointer w-fit"
+                    className="text-white font-newake text-8xl mb-20 cursor-pointer w-fit neon-title"
                     onClick={handleClickScrollToInformations}
                 >
                     INFORMATIONS
                 </h1>
                 <h1
-                    className="text-stroke font-newake text-white text-8xl cursor-pointer w-fit"
+                    className="font-newake text-white text-8xl cursor-pointer w-fit neon-title"
                     onClick={handleClickScrollToAnalyses}
                 >
                     ANALYSES
