@@ -1,79 +1,23 @@
 version: "3"
 
 services:
-
-# HADOOP
-  namenode:
-    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
-    container_name: namenode
-    restart: always
-    ports:
-      - 9870:9870
-      - 9000:9000
-    volumes:
-      - hadoop_namenode:/hadoop/dfs/name
-    environment:
-      - CLUSTER_NAME=test
-    env_file:
-      - ./hadoop.env
-
-  datanode:
-    build:
-      context: ./
-      dockerfile: datanode/Dockerfile
-    container_name: datanode
-    restart: always
-    ports:
-      - 5000:5000
-    volumes:
-      - hadoop_datanode:/hadoop/dfs/data
-      - ../images:/home
-      - ./api:/app
-    environment:
-      SERVICE_PRECONDITION: "namenode:9870"
-    env_file:
-      - ./hadoop.env
-  
-  resourcemanager:
-    image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.2.1-java8
-    container_name: resourcemanager
-    restart: always
-    environment:
-      SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode:9864"
-    env_file:
-      - ./hadoop.env
-
-  nodemanager1:
-    image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.2.1-java8
-    container_name: nodemanager
-    restart: always
-    environment:
-      SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode:9864 resourcemanager:8088"
-    env_file:
-      - ./hadoop.env
-  
-  historyserver:
-    image: bde2020/hadoop-historyserver:2.0.0-hadoop3.2.1-java8
-    container_name: historyserver
-    restart: always
-    environment:
-      SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode:9864 resourcemanager:8088"
-    volumes:
-      - hadoop_historyserver:/hadoop/yarn/timeline
-    env_file:
-      - ./hadoop.env
-
-# BASE DE DONNEES
+  # DATABASES
   redis:
-    image: redis:latest
+    container_name: redis
+    build:
+      dockerfile: redis/Dockerfile
+      context: ./
+    restart: unless-stopped
+    command: [ "redis-server" ]
     ports:
       - 6379:6379
     volumes:
       - redis_data:/data
-    command: [ "redis-server"]
-  
+    networks:
+      - api
+
   mongo:
-    image: mongo
+    image: mongo:latest
     container_name: mongodb
     hostname: mongodb
     restart: unless-stopped
@@ -89,9 +33,14 @@ services:
       MONGO_INITDB_DATABASE: ${MONGO_DB_NAME}
       MONGODB_DATA_DIR: ./volumes/db
       MONGODB_LOG_DIR: /dev/null
+    networks:
+      - databases
+      - api
+      - kafka-network
 
   mongo-express:
-    image: mongo-express
+    container_name: mongo-express
+    image: mongo-express:1.0.0-alpha.4
     restart: always
     ports:
       - 8081:8081
@@ -101,17 +50,17 @@ services:
       ME_CONFIG_MONGODB_URL: ${MONGO_URL}
     depends_on:
       - mongo
+    networks:
+      - databases
 
-  # SCRIPTS
-  python:
+  # PYTHON SCRIPTS
+  python-twitter:
     container_name: python-twitter
-    # command: python3 ../../stream.py
     build:
       dockerfile: python-twitter/Dockerfile
       context: ./
     volumes:
       - ./python-twitter:/usr/src
-      - ./.env:/usr/src/.env
       - ./feeds:/usr/src/feeds
       - ./tools:/usr/src/tools
     environment:
@@ -121,43 +70,49 @@ services:
     depends_on:
       - redis
       - mongo
-    
-  python2:
+    networks:
+      - api
+      - kafka-network
+
+  python-tmdb:
     container_name: python-tmdb
     build:
       dockerfile: python-tmdb/Dockerfile
       context: ./
     volumes:
       - ./python-tmdb:/usr/src
-      - ./.env:/usr/src/.env
       - ./feeds:/usr/src/feeds
       - ./tools:/usr/src/tools
     environment:
-      UVICORN_PORT: 5002
+      UVICORN_PORT: 5001
     ports:
-      - 5002:5002
+      - 5002:5001
     depends_on:
       - mongo
       - redis
-    
-  python3:
+    networks:
+      - api
+      - kafka-network
+
+  python-rss:
     container_name: python-RSS
-    # command: python3 ../../stream.py
     build:
       dockerfile: python-RSS/Dockerfile
       context: ./
     volumes:
       - ./python-RSS:/usr/src
-      - ./.env:/usr/src/.env
       - ./feeds:/usr/src/feeds
       - ./tools:/usr/src/tools
     environment:
-      UVICORN_PORT: 5003
+      UVICORN_PORT: 5001
     ports:
-      - 5003:5003
+      - 5003:5001
     depends_on:
       - mongo
-  
+    networks:
+      - api
+      - kafka-network
+
   tmdb-producer:
     container_name: tmdb-producer
     restart: on-failure
@@ -167,15 +122,16 @@ services:
       context: ./kafka/producer
     volumes:
       - ./kafka/producer:/usr/src
-      - ./.env:/usr/src/.env
     depends_on:
       kafka:
         condition: service_healthy
-      
-  
+    networks:
+      - kafka-network
+
   tmdb-consumer:
     container_name: tmdb-consumer
     restart: on-failure
+    command: python3 ./tmdb_consumer.py
     build:
       dockerfile: kafka/consumer/Dockerfile
       context: ./
@@ -184,45 +140,77 @@ services:
       - tmdb-producer
     volumes:
       - ./kafka/consumer:/usr/src
+      - ./tools:/usr/src/tools
+    networks:
+      - kafka-network
+  
+  rss-producer:
+    container_name: rss-producer
+    restart: on-failure
+    command: python3 ./rss_producer.py
+    build:
+      dockerfile: ./Dockerfile
+      context: ./kafka/producer
+    volumes:
+      - ./kafka/producer:/usr/src
+      - ./.env:/usr/src/.env
+    depends_on:
+      kafka:
+        condition: service_healthy
+    networks:
+      - kafka-network
+      
+  rss-consumer:
+    container_name: rss-consumer
+    command: python3 ./rss_consumer.py
+    restart: on-failure
+    build:
+      dockerfile: kafka/consumer/Dockerfile
+      context: ./
+    depends_on:
+      - mongo
+      - rss-producer
+    volumes:
+      - ./kafka/consumer:/usr/src
       - ./.env:/usr/src/.env
       - ./tools:/usr/src/tools
-    
-  python4:
-    container_name: python-scheduler
+      - ./feeds:/usr/src/feeds
+    networks:
+      - kafka-network
+
+  pipeline-ml:
+    container_name: pipeline-ml
     build:
-      dockerfile: python-RSS/Dockerfile
+      dockerfile: pipeline-ml/Dockerfile
       context: ./
-    volumes:
-      - ./scheduler:/usr/src
     depends_on:
-      - python
-      - python2
-      - python3
+      - mongo
+    networks:
+      - databases
 
   api-movies:
     container_name: api-movies
-    build: 
+    build:
       context: ./
-      dockerfile: api/service_movies/DockerFile
+      dockerfile: api/DockerFile
     volumes:
-      - ./api/service_movies:/usr/app
+      - ./api:/usr/app
     ports:
-      - 4000:5000
+      - 5000:5000
     depends_on:
       - mongo
-  
-  
-  # ======================
-# Kafka
-# ======================
+    networks:
+      - kafka-network
+
+  # KAFKA
   kafka:
     image: confluentinc/cp-kafka
     container_name: kafka
     depends_on:
       - zookeeper
-      - python
-      - python2
-      - python3
+      - python-twitter
+      - python-tmdb
+      - python-rss
     environment:
       KAFKA_CREATE_TOPICS: tmdb,twitter,rss
       KAFKA_BROKER_ID: 1
@@ -234,7 +222,19 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 100
     healthcheck:
-      test: ["CMD", "bash", "-c", "unset", "JMX_PORT", ";", "/bin/kafka-topics.sh", "--bootstrap-server", "localhost:29092", "--list"]
+      test:
+        [
+          "CMD",
+          "bash",
+          "-c",
+          "unset",
+          "JMX_PORT",
+          ";",
+          "/bin/kafka-topics.sh",
+          "--bootstrap-server",
+          "localhost:29092",
+          "--list"
+        ]
       interval: 20s
       timeout: 10s
       retries: 4
@@ -242,19 +242,22 @@ services:
       - 29092:29092
       - 9092:9092
       - 30001:30001
+    networks:
+      - kafka-network
 
   zookeeper:
-    image: confluentinc/cp-zookeeper
+    image: confluentinc/cp-zookeeper:latest
     container_name: zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - kafka-network
 
-
-  
+  # UI
   interface:
     container_name: interface
-    build: 
+    build:
       context: ./
       dockerfile: interface/Dockerfile
     volumes:
@@ -263,10 +266,14 @@ services:
       - 8080:3000
     depends_on:
       - api-movies
-  
+
+
+networks:
+  databases:
+  api:
+  kafka-network:
+
+
 volumes:
-  hadoop_namenode:
-  hadoop_datanode:
-  hadoop_historyserver:
   mongo:
   redis_data:

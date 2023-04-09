@@ -1,1 +1,0 @@
-from .movie import router as movies_router
