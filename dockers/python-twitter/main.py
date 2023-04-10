@@ -21,10 +21,8 @@ In term of database we use MongoDB (https://www.mongodb.com/), as we said before
 from tools.redis_client import RedisClient
 from tools.mongo import MongodbClient
 from feeds.twitterClient import TwitterClient
-from fastapi import FastAPI
-from fastapi import Response
+from fastapi import FastAPI, Response
 import json
-import uvicorn
 
 app = FastAPI()
 

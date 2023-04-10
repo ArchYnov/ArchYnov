@@ -21,7 +21,6 @@ In term of database we use MongoDB (https://www.mongodb.com/), as we said before
 from tools.mongo import MongodbClient
 from feeds.rssClient import RSSClient
 from fastapi import FastAPI
-import uvicorn
 
 app = FastAPI()
 
