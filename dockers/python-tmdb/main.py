@@ -15,14 +15,13 @@ TMDB -> The movie DataBase provide an API to fetch any data they had (https://ww
 Twitter -> The social media give access to every messages posted on their website (https://twitter.com/).
 NewRSS -> Every now and then new articles are posted on their respective website waiting to be fetched (https://www.allocine.fr/) (https://screenrant.com/).
 
-In term of database we use MongoDB (https://www.mongodb.com/), as we said before  HDFS (https://hadoop.apache.org/) and Redis for API keys.
+In term of database we use MongoDB (https://www.mongodb.com/), Elasticsearch (https://www.elastic.co/).
 """
 
 from tools.redis_client import RedisClient
 from tools.mongo import MongodbClient
 from feeds.tmdbClient import TMDbClient
 from fastapi import FastAPI, Response
-import uvicorn
 import json
 
 app = FastAPI()

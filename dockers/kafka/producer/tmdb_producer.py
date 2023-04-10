@@ -14,5 +14,5 @@ while True:
             producer.send("tmdb", content)
     except:
         print("erreur lors de la récupération de l'api")
-    # A MODIFIER, on veut pas recuperer les films toutes les 5 secondes
-    sleep(5)
+    # A MODIFIER, on veut pas recuperer les films toutes les heures
+    sleep(60*60)
