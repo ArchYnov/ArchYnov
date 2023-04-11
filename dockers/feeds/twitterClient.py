@@ -27,7 +27,7 @@ class TwitterClient(object):
         except:
             print('Error: Authentication Failed')
 
-    def insertDb(self, tweets):
+    def insertDb(self, tweets, movie_id):
         """ 
         DESC : format tweet infos before sending them to the db
 
@@ -45,6 +45,7 @@ class TwitterClient(object):
                     'nombre_retweet': tweet.retweet_count,
                     'nombre_like': tweet.favorite_count,
                 },
+                'tmdb': movie_id,
                 '_sentiment_analysis' : 'n/a'
             })
         self.db.insertMany("tweets", actions, ['_id'])
@@ -77,7 +78,7 @@ class TwitterClient(object):
         except TweepyException as e:
             print('Error : ' + str(e))
 
-    def pushNewTweets(self, query, count):
+    def pushNewTweets(self, query, count, movie_id):
         """ 
         DESC : fetch tweets before sending formatted version of them to the DB
 
@@ -85,7 +86,7 @@ class TwitterClient(object):
                 count - number of tweet to download ( default is 10 )
         OUT  : result of the request
         """
-        return self.insertDb(self.getTweets(query, count))
+        return self.insertDb(self.getTweets(query, count), movie_id)
 
     def setSupportedLanguages(self, language):
         """ 

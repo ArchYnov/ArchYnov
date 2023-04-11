@@ -47,11 +47,11 @@ async def fetchTwitter():
         OUT  : result of the request
     """
     # Fetch mongoDB movie list
-    testCol = client_mongo.getAllDocumentsFromCollection("tmdb")
-    all_movies = [ ele["original_title"] for ele in testCol ]
+    testCol = client_mongo.getAllDocumentsFromCollection("tmdb", column={"_id": 1, "original_title": 1})
+    all_movies = [{"_id": ele["_id"], "original_title": ele["original_title"]} for ele in testCol]
     for movie_name in all_movies:
-        query = '#' + movie_name.replace(' ', '') + ' -filter:retweets'
-        twitter_feed.pushNewTweets(query=query , count=10)
+        query = '#' + movie_name["original_title"].replace(' ', '') + ' -filter:retweets'
+        twitter_feed.pushNewTweets(query=query , count=1, movie_id=movie_name["_id"])
     return Response(
             status_code=200,
             content=json.dumps({"result": "sucess"}),

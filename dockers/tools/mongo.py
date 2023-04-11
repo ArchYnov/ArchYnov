@@ -21,7 +21,7 @@ class MongodbClient():
         collection = self.db.get_collection(name_collection)
         return collection
     
-    def getAllDocumentsFromCollection(self, name_collection):
+    def getAllDocumentsFromCollection(self, name_collection, column= {}):
         """get all documents
 
         Args:
@@ -32,7 +32,7 @@ class MongodbClient():
         """
         
         collection = self.db[name_collection]
-        allCollection = collection.find({})
+        allCollection = collection.find({},column)
         return allCollection
     
 
