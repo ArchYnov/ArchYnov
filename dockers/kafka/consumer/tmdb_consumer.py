@@ -2,6 +2,8 @@ from json import loads
 from kafka import KafkaConsumer
 from tools.mongo import MongodbClient
 
+print(" - Application started!")
+
 MONGODB_CLIENT = MongodbClient()
 CHECK_DUPLICATES = ['id', 'original_title']
 

@@ -95,12 +95,12 @@ services:
       - kafka-network
 
   python-rss:
-    container_name: python-RSS
+    container_name: python-rss
     build:
-      dockerfile: python-RSS/Dockerfile
+      dockerfile: python-rss/Dockerfile
       context: ./
     volumes:
-      - ./python-RSS:/usr/src
+      - ./python-rss:/usr/src
       - ./feeds:/usr/src/feeds
       - ./tools:/usr/src/tools
     environment:
@@ -116,7 +116,7 @@ services:
   tmdb-producer:
     container_name: tmdb-producer
     restart: on-failure
-    command: python3 ./tmdb_producer.py
+    command: python3 -u ./tmdb_producer.py
     build:
       dockerfile: ./Dockerfile
       context: ./kafka/producer
@@ -131,7 +131,7 @@ services:
   tmdb-consumer:
     container_name: tmdb-consumer
     restart: on-failure
-    command: python3 ./tmdb_consumer.py
+    command: python3 -u ./tmdb_consumer.py
     build:
       dockerfile: kafka/consumer/Dockerfile
       context: ./
@@ -147,7 +147,7 @@ services:
   rss-producer:
     container_name: rss-producer
     restart: on-failure
-    command: python3 ./rss_producer.py
+    command: python3 -u ./rss_producer.py
     build:
       dockerfile: ./Dockerfile
       context: ./kafka/producer
@@ -162,7 +162,7 @@ services:
       
   rss-consumer:
     container_name: rss-consumer
-    command: python3 ./rss_consumer.py
+    command: python3 -u ./rss_consumer.py
     restart: on-failure
     build:
       dockerfile: kafka/consumer/Dockerfile

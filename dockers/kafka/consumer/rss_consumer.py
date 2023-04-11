@@ -3,6 +3,8 @@ from kafka import KafkaConsumer
 from tools.mongo import MongodbClient
 from feeds.rssClient import RSSClient
 
+print(" - Application started!")
+
 MONGODB_CLIENT = MongodbClient()
 RSS_CLIENT = RSSClient(db=MONGODB_CLIENT, urls={
         "allocineaffiche": "https://www.allocine.fr/rss/news-cine.xml",
