@@ -5,8 +5,8 @@ class MovieService():
     def __init__(self, mongo: Mongo):
         self._collection = mongo.db['tmdb']
 
-    def find(self, limit: int, offset: int):
-        return self._collection.find().limit(limit).skip(offset)
+    def find(self, sort: list, limit: int, offset: int):
+        return self._collection.find().sort(sort).limit(limit).skip(offset)
         
     def find_by_id(self, id: int | str): 
         try:
@@ -18,3 +18,13 @@ class MovieService():
     
     def count(self):
         return self._collection.count_documents({})
+    
+    def count_by_filter(self, filter: dict):
+        return self._collection.count_documents(filter)
+    
+    def find_by_filter(self, filter: dict, sort: list, limit: int, offset: int):
+        return self._collection.find(filter).sort(sort).limit(limit).skip(offset)
+    
+    def find_by_aggregate(self, filter: list):
+        return self._collection.aggregate(filter)
+
