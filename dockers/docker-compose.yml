@@ -123,9 +123,10 @@ services:
     volumes:
       - ./kafka/producer:/usr/src
     depends_on:
-      - kafka:
+      kafka:
         condition: service_healthy
-      - tmdb_consumer
+      tmdb-consumer:
+        condition: service_started
     networks:
       - kafka-network
 
@@ -155,9 +156,10 @@ services:
       - ./kafka/producer:/usr/src
       - ./.env:/usr/src/.env
     depends_on:
-      - kafka:
+      kafka:
         condition: service_healthy
-      - rss-consumer
+      rss-consumer:
+        condition: service_started
     networks:
       - kafka-network
       
