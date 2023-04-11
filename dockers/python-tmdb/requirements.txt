@@ -1,10 +1,7 @@
-fastapi==0.89.1
-pydantic==1.10.4
-pymongo==4.3.3
 uvicorn==0.20.0
+fastapi==0.89.1
+pymongo==4.3.3
 redis==4.4.2
+
 tmdbsimple==2.8.2
-polyglot==15.10.3
-textblob==0.17.1
-emoji==2.2.0
 alphabet-detector==0.0.7

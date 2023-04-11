@@ -2,6 +2,8 @@ from json import loads
 from kafka import KafkaConsumer
 from tools.mongo import MongodbClient
 
+print(" - Application started!")
+
 MONGODB_CLIENT = MongodbClient()
 CHECK_DUPLICATES = ['id', 'original_title']
 
@@ -16,7 +18,6 @@ for value in consumer:
     # on convertit les datas envoyer par le consumer bytes -> dict
     data = loads(value.value.decode("utf-8"))
     try:
-        print(data)
         MONGODB_CLIENT.insertOne("tmdb", data, CHECK_DUPLICATES)
         print("insertion en base réussis")
     except:
