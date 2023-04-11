@@ -24,6 +24,6 @@ for value in consumer:
     data = loads(value.value.decode("utf-8"))
     # try:
         # MONGODB_CLIENT.insertOne("tmdb", data, CHECK_DUPLICATES)
-    RSS_CLIENT.insertDb(data["source"], data["articles"])
+    RSS_CLIENT.insertDb(data["source"], data["articles"], CHECK_DUPLICATES)
     # except:
     #     print("erreur lors de l'insertion en base")

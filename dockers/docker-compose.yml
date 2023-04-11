@@ -123,8 +123,9 @@ services:
     volumes:
       - ./kafka/producer:/usr/src
     depends_on:
-      kafka:
+      - kafka:
         condition: service_healthy
+      - tmdb_consumer
     networks:
       - kafka-network
 
@@ -137,7 +138,6 @@ services:
       context: ./
     depends_on:
       - mongo
-      - tmdb-producer
     volumes:
       - ./kafka/consumer:/usr/src
       - ./tools:/usr/src/tools
@@ -155,8 +155,9 @@ services:
       - ./kafka/producer:/usr/src
       - ./.env:/usr/src/.env
     depends_on:
-      kafka:
+      - kafka:
         condition: service_healthy
+      - rss-consumer
     networks:
       - kafka-network
       
@@ -169,7 +170,6 @@ services:
       context: ./
     depends_on:
       - mongo
-      - rss-producer
     volumes:
       - ./kafka/consumer:/usr/src
       - ./.env:/usr/src/.env
