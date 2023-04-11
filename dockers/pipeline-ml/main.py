@@ -27,6 +27,7 @@ client_mongo = MongodbClient()
 sentiment_pipeline = pipeline("sentiment-analysis")
 
 def main():
+    count_loop = 0
     while True: 
         # set query to fetch the documents where Sentiment Analysis isn't defined
         query = { '_sentiment_analysis': 'n/a' }
@@ -45,8 +46,13 @@ def main():
         for index, value in enumerate(rss_articles):
             client_mongo.update_one('rss', { "_id" : value[0] }, { "$set" : { "_sentiment_analysis" : rss_analysed[index] } })
 
+        count_loop += 1
         print(f'Added sentiment analysis for {len(tweet_analysed)} tweets and {len(rss_analysed)} rss articles.')
-        time.sleep(900)
+        if len(tweet_analysed) > 0 or len(rss_analysed) > 0 :
+            time.sleep(60)
+        else :
+            time.sleep(60*60-(60 * count_loop))
+            count_loop = 0
 
 
 if __name__ == '__main__':
