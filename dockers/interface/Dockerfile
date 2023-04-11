@@ -1,13 +1,14 @@
-FROM node:latest
+FROM node:latest 
 
-WORKDIR /app
-
-COPY interface/package.json /app/
-
+WORKDIR /usr/app
+ADD ./interface/package.json .
+ADD ./interface/package-lock.json .
 RUN npm install
+
+COPY ./interface .
+
+USER node
 
 EXPOSE 3000
 
-COPY interface/. /app/
-
-CMD ["npm", "start"]
+CMD ["npm", "run", "start"]
