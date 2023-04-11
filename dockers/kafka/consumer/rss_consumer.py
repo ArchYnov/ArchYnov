@@ -10,7 +10,7 @@ RSS_CLIENT = RSSClient(db=MONGODB_CLIENT, urls={
         "allocineaffiche": "https://www.allocine.fr/rss/news-cine.xml",
         "screenrant": "https://screenrant.com/feed/",
     })
-CHECK_DUPLICATES = ['_id']
+# CHECK_DUPLICATES = ['_id']
 
 # Create Kafka consumer
 consumer = KafkaConsumer(
@@ -24,6 +24,6 @@ for value in consumer:
     data = loads(value.value.decode("utf-8"))
     # try:
         # MONGODB_CLIENT.insertOne("tmdb", data, CHECK_DUPLICATES)
-    RSS_CLIENT.insertDb(data["source"], data["articles"], CHECK_DUPLICATES)
+    RSS_CLIENT.insertDb(data["source"], data["articles"])
     # except:
     #     print("erreur lors de l'insertion en base")

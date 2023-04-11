@@ -138,7 +138,10 @@ services:
       dockerfile: kafka/consumer/Dockerfile
       context: ./
     depends_on:
-      - mongo
+      kafka:
+        condition: service_healthy
+      mongo:
+        condition: service_started
     volumes:
       - ./kafka/consumer:/usr/src
       - ./tools:/usr/src/tools
@@ -171,7 +174,10 @@ services:
       dockerfile: kafka/consumer/Dockerfile
       context: ./
     depends_on:
-      - mongo
+      kafka:
+        condition: service_healthy
+      mongo:
+        condition: service_started
     volumes:
       - ./kafka/consumer:/usr/src
       - ./.env:/usr/src/.env
