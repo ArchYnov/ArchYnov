@@ -143,6 +143,42 @@ services:
       - ./tools:/usr/src/tools
     networks:
       - kafka-network
+
+  twitter-producer:
+    container_name: twitter-producer
+    restart: on-failure
+    command: python3 -u ./twitter_producer.py
+    build:
+      dockerfile: ./Dockerfile
+      context: ./kafka/producer
+    volumes:
+      - ./kafka/producer:/usr/src
+      - ./tools:/usr/src/tools
+    depends_on:
+      kafka:
+        condition: service_healthy
+      twitter-consumer:
+        condition: service_started
+    networks:
+      - kafka-network
+
+  twitter-consumer:
+    container_name: twitter-consumer
+    restart: on-failure
+    command: python3 -u ./twitter_consumer.py
+    build:
+      dockerfile: kafka/consumer/Dockerfile
+      context: ./
+    depends_on:
+      kafka:
+        condition: service_healthy
+      mongo:
+        condition: service_started
+    volumes:
+      - ./kafka/consumer:/usr/src
+      - ./tools:/usr/src/tools
+    networks:
+      - kafka-network
   
   rss-producer:
     container_name: rss-producer

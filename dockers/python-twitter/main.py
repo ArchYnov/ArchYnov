@@ -25,6 +25,7 @@ from fastapi import FastAPI
 from fastapi import Response
 import json
 import uvicorn
+from datetime import datetime
 
 app = FastAPI()
 
@@ -38,6 +39,10 @@ tokens = client_redis.get_value_by_key(key)
 
 twitter_feed = TwitterClient(client_mongo, client_redis, tokens)
 
+def datetime_handler(obj):
+    if isinstance(obj, datetime):
+        return obj.isoformat()
+
 @app.get("/fetchTwitter")
 async def fetchTwitter():
     """ 
@@ -47,13 +52,15 @@ async def fetchTwitter():
         OUT  : result of the request
     """
     # Fetch mongoDB movie list
+
     testCol = client_mongo.getAllDocumentsFromCollection("tmdb", column={"_id": 1, "original_title": 1})
     all_movies = [{"_id": ele["_id"], "original_title": ele["original_title"]} for ele in testCol]
+    tweets = []
     for movie_name in all_movies:
         query = '#' + movie_name["original_title"].replace(' ', '') + ' -filter:retweets'
-        twitter_feed.pushNewTweets(query=query , count=1, movie_id=movie_name["_id"])
+        tweets += twitter_feed.pushNewTweets(query=query , count=2, movie_id=movie_name["_id"])
     return Response(
             status_code=200,
-            content=json.dumps({"result": "sucess"}),
+            content=json.dumps({"result": tweets}, default=datetime_handler),
             media_type="application/json"
         )
