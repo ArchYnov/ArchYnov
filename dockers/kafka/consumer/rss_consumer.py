@@ -10,7 +10,7 @@ RSS_CLIENT = RSSClient(db=MONGODB_CLIENT, urls={
         "allocineaffiche": "https://www.allocine.fr/rss/news-cine.xml",
         "screenrant": "https://screenrant.com/feed/",
     })
-CHECK_DUPLICATES = ['_id']
+# CHECK_DUPLICATES = ['_id']
 
 # Create Kafka consumer
 consumer = KafkaConsumer(

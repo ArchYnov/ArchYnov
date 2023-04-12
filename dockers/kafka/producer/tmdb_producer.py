@@ -18,7 +18,7 @@ while True:
             producer.send("tmdb", content)
         print(f"All the data has beem sent.")
         wait_time = 60*60
-    except  ConnectionError as error:
+    except ConnectionError as error:
         print("erreur lors de la récupération de l'api")
         print(error)
         wait_time = 60

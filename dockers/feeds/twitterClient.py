@@ -27,27 +27,14 @@ class TwitterClient(object):
         except:
             print('Error: Authentication Failed')
 
-    def insertDb(self, tweets):
+    def insertDb(self, data):
         """ 
         DESC : format tweet infos before sending them to the db
 
         IN   : array of dict containing every infos about their tweet 
         OUT  : array of sorted provided dict 
         """
-        actions = []
-        for tweet in tweets:
-            actions.append({
-                '_index': 'twitter',
-                '_id': tweet.id_str,
-                '_source': {
-                    'date': tweet.created_at,
-                    'text': tweet.full_text,
-                    'nombre_retweet': tweet.retweet_count,
-                    'nombre_like': tweet.favorite_count,
-                },
-                '_sentiment_analysis' : 'n/a'
-            })
-        self.db.insertMany("tweets", actions, ['_id'])
+        self.db.insertMany("tweets", data, ['_id'])
         
     def deleteDb(self):
         """ 
@@ -77,7 +64,7 @@ class TwitterClient(object):
         except TweepyException as e:
             print('Error : ' + str(e))
 
-    def pushNewTweets(self, query, count):
+    def pushNewTweets(self, query, count, movie_id):
         """ 
         DESC : fetch tweets before sending formatted version of them to the DB
 
@@ -85,7 +72,22 @@ class TwitterClient(object):
                 count - number of tweet to download ( default is 10 )
         OUT  : result of the request
         """
-        return self.insertDb(self.getTweets(query, count))
+        tweets = self.getTweets(query, count)
+        actions = []
+        for tweet in tweets:
+            actions.append({
+                '_index': 'twitter',
+                '_id': tweet.id_str,
+                '_source': {
+                    'date': tweet.created_at,
+                    'text': tweet.full_text,
+                    'nombre_retweet': tweet.retweet_count,
+                    'nombre_like': tweet.favorite_count,
+                },
+                'tmdb': movie_id,
+                '_sentiment_analysis' : 'n/a'
+            })
+        return actions
 
     def setSupportedLanguages(self, language):
         """ 
