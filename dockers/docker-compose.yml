@@ -9,8 +9,8 @@ services:
       context: ./
     restart: unless-stopped
     command: [ "redis-server" ]
-    ports:
-      - 6379:6379
+    expose:
+      - "6379"
     volumes:
       - redis_data:/data
     networks:
@@ -22,8 +22,8 @@ services:
     hostname: mongodb
     restart: unless-stopped
     command: mongod --auth
-    ports:
-      - 27017:27017
+    expose:
+      - "27017"
     env_file: .env
     volumes:
       - mongo:/data/db
@@ -53,81 +53,20 @@ services:
     networks:
       - databases
 
-  # PYTHON SCRIPTS
-  python-twitter:
-    container_name: python-twitter
-    build:
-      dockerfile: python-twitter/Dockerfile
-      context: ./
-    volumes:
-      - ./python-twitter:/usr/src
-      - ./feeds:/usr/src/feeds
-      - ./tools:/usr/src/tools
-    environment:
-      UVICORN_PORT: 5001
-    ports:
-      - 5001:5001
-    depends_on:
-      - redis
-      - mongo
-    networks:
-      - api
-      - kafka-network
-
-  python-tmdb:
-    container_name: python-tmdb
-    build:
-      dockerfile: python-tmdb/Dockerfile
-      context: ./
-    volumes:
-      - ./python-tmdb:/usr/src
-      - ./feeds:/usr/src/feeds
-      - ./tools:/usr/src/tools
-    environment:
-      UVICORN_PORT: 5001
-    ports:
-      - 5002:5001
-    depends_on:
-      - mongo
-      - redis
-    networks:
-      - api
-      - kafka-network
-
-  python-rss:
-    container_name: python-rss
-    build:
-      dockerfile: python-rss/Dockerfile
-      context: ./
-    volumes:
-      - ./python-rss:/usr/src
-      - ./feeds:/usr/src/feeds
-      - ./tools:/usr/src/tools
-    environment:
-      UVICORN_PORT: 5001
-    ports:
-      - 5003:5001
-    depends_on:
-      - mongo
-    networks:
-      - api
-      - kafka-network
-
   tmdb-producer:
     container_name: tmdb-producer
     restart: on-failure
     command: python3 -u ./tmdb_producer.py
     build:
-      dockerfile: ./Dockerfile
-      context: ./kafka/producer
-    volumes:
-      - ./kafka/producer:/usr/src
+      dockerfile: kafka/producer/Dockerfile
+      context : .
     depends_on:
       kafka:
         condition: service_healthy
       tmdb-consumer:
         condition: service_started
     networks:
+      - api
       - kafka-network
 
   tmdb-consumer:
@@ -136,15 +75,12 @@ services:
     command: python3 -u ./tmdb_consumer.py
     build:
       dockerfile: kafka/consumer/Dockerfile
-      context: ./
+      context: .
     depends_on:
       kafka:
         condition: service_healthy
       mongo:
         condition: service_started
-    volumes:
-      - ./kafka/consumer:/usr/src
-      - ./tools:/usr/src/tools
     networks:
       - kafka-network
 
@@ -153,17 +89,15 @@ services:
     restart: on-failure
     command: python3 -u ./twitter_producer.py
     build:
-      dockerfile: ./Dockerfile
-      context: ./kafka/producer
-    volumes:
-      - ./kafka/producer:/usr/src
-      - ./tools:/usr/src/tools
+      dockerfile: kafka/producer/Dockerfile
+      context: .
     depends_on:
       kafka:
         condition: service_healthy
       twitter-consumer:
         condition: service_started
     networks:
+      - api
       - kafka-network
 
   twitter-consumer:
@@ -172,15 +106,12 @@ services:
     command: python3 -u ./twitter_consumer.py
     build:
       dockerfile: kafka/consumer/Dockerfile
-      context: ./
+      context: .
     depends_on:
       kafka:
         condition: service_healthy
       mongo:
         condition: service_started
-    volumes:
-      - ./kafka/consumer:/usr/src
-      - ./tools:/usr/src/tools
     networks:
       - kafka-network
   
@@ -189,11 +120,8 @@ services:
     restart: on-failure
     command: python3 -u ./rss_producer.py
     build:
-      dockerfile: ./Dockerfile
-      context: ./kafka/producer
-    volumes:
-      - ./kafka/producer:/usr/src
-      - ./.env:/usr/src/.env
+      dockerfile: kafka/producer/Dockerfile
+      context : .
     depends_on:
       kafka:
         condition: service_healthy
@@ -208,17 +136,12 @@ services:
     restart: on-failure
     build:
       dockerfile: kafka/consumer/Dockerfile
-      context: ./
+      context : .
     depends_on:
       kafka:
         condition: service_healthy
       mongo:
         condition: service_started
-    volumes:
-      - ./kafka/consumer:/usr/src
-      - ./.env:/usr/src/.env
-      - ./tools:/usr/src/tools
-      - ./feeds:/usr/src/feeds
     networks:
       - kafka-network
 
@@ -226,7 +149,7 @@ services:
     container_name: pipeline-ml
     build:
       dockerfile: pipeline-ml/Dockerfile
-      context: ./
+      context: .
     depends_on:
       - mongo
     networks:
@@ -252,9 +175,6 @@ services:
     container_name: kafka
     depends_on:
       - zookeeper
-      - python-twitter
-      - python-tmdb
-      - python-rss
     environment:
       KAFKA_CREATE_TOPICS: tmdb,twitter,rss
       KAFKA_BROKER_ID: 1
@@ -282,10 +202,10 @@ services:
       interval: 20s
       timeout: 10s
       retries: 4
-    ports:
-      - 29092:29092
-      - 9092:9092
-      - 30001:30001
+    expose:
+      - "29092"
+      - "9092"
+      - "30001"
     networks:
       - kafka-network
 
@@ -299,17 +219,17 @@ services:
       - kafka-network
 
   # UI
-  interface:
-    container_name: interface
-    build:
-      context: ./
-      dockerfile: interface/Dockerfile
-    volumes:
-      - ./interface:/app
-    ports:
-      - 8080:3000
-    depends_on:
-      - api-movies
+  # interface:
+  #   container_name: interface
+  #   build:
+  #     context: ./
+  #     dockerfile: interface/Dockerfile
+  #   volumes:
+  #     - ./interface:/app
+  #   ports:
+  #     - 8080:3000
+  #   depends_on:
+  #     - api-movies
 
 
 networks:
