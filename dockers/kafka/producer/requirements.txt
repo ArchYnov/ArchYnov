@@ -1,4 +1,12 @@
 kafka-python==2.0.2
 python-dotenv==0.19.2
 requests==2.28.2
-pymongo==3.12.1
+ccxt==1.67.1
+pymongo==4.3.3
+redis==4.4.2
+feedparser==6.0.8
+bs4==0.0.1
+tweepy==4.4.0
+polyglot==15.10.3
+tmdbsimple==2.8.2
+alphabet-detector==0.0.7

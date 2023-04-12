@@ -32,7 +32,7 @@ class MongodbClient():
         """
         
         collection = self.db[name_collection]
-        allCollection = collection.find({},column)
+        allCollection = collection.find({}, column)
         return allCollection
     
 

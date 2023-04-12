@@ -76,7 +76,10 @@ class TMDbClient(object):
                 temp_genres = []
                 for genre in movie['genre_ids']:
                     if genre in genre_transcript.keys():
-                        temp_genres.append({ genre : genre_transcript[genre] })
+                        temp_genres.append({ 
+                                                'id' : genre,
+                                                'title' : genre_transcript[genre] 
+                                            })
                 self.new_movies[index]['genre_ids'] = temp_genres
             return self.new_movies
         except Exception as e :

@@ -1,6 +1,7 @@
 from tweepy import OAuthHandler, API, Cursor
 from tweepy.errors import TweepyException
 from polyglot.detect import Detector
+from datetime import datetime
 
 class TwitterClient(object):
     def __init__(self, db, client_redis, supported_languages=None):
@@ -27,14 +28,27 @@ class TwitterClient(object):
         except:
             print('Error: Authentication Failed')
 
-    def insertDb(self, data):
+    def insertDb(self, tweets):
         """ 
         DESC : format tweet infos before sending them to the db
 
         IN   : array of dict containing every infos about their tweet 
         OUT  : array of sorted provided dict 
         """
-        self.db.insertMany("tweets", data, ['_id'])
+        actions = []
+        for tweet in tweets:
+            actions.append({
+                '_index': 'twitter',
+                '_id': tweet.id_str,
+                '_source': {
+                    'date': tweet.created_at,
+                    'text': tweet.full_text,
+                    'nombre_retweet': tweet.retweet_count,
+                    'nombre_like': tweet.favorite_count,
+                },
+                '_sentiment_analysis' : 'n/a'
+            })
+        self.db.insertMany("tweets", actions, ['_id'])
         
     def deleteDb(self):
         """ 
@@ -64,10 +78,13 @@ class TwitterClient(object):
         except TweepyException as e:
             print('Error : ' + str(e))
 
+    def datetime_handler(obj):
+        if isinstance(obj, datetime):
+            return obj.isoformat()
+
     def pushNewTweets(self, query, count, movie_id):
         """ 
         DESC : fetch tweets before sending formatted version of them to the DB
-
         IN   :  query - search input to fetch tweets
                 count - number of tweet to download ( default is 10 )
         OUT  : result of the request
@@ -84,10 +101,15 @@ class TwitterClient(object):
                     'nombre_retweet': tweet.retweet_count,
                     'nombre_like': tweet.favorite_count,
                 },
-                'tmdb': movie_id,
+                'tmdb': str(movie_id),
                 '_sentiment_analysis' : 'n/a'
             })
-        return actions
+        temp_action = actions
+        for index, value in enumerate(actions):
+            if isinstance(value['_source']['date'], datetime):
+                temp_action[index]['_source']['date'] = value['_source']['date'].isoformat()
+
+        return temp_action
 
     def setSupportedLanguages(self, language):
         """ 
