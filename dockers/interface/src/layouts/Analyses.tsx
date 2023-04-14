@@ -1,5 +1,6 @@
 import diamond from '../assets/backgrounds/diamond.svg'
 import analysis_section from '../assets/backgrounds/analysis.png'
+import { Link } from 'react-router-dom'
 
 const Analyses = () => {
     return (
@@ -24,7 +25,6 @@ const Analyses = () => {
                 </h1>
 
                 <p className="text-xl text-white font-josefin text-justify">
-                    Découvrez les analyses de notre équipe de data scientists.
                     Nous vous proposons{' '}
                     <span className="text-primary font-bold">
                         d'explorer les données
@@ -35,13 +35,12 @@ const Analyses = () => {
                     </span>{' '}
                     en utilisant des{' '}
                     <span className="text-primary font-bold">
-                        techniques de machine learning
+                        techniques de deep learning
                     </span>
-                    . Vous pourrez parcourir les
+                    . Vous pourrez parcourir les{' '}
                     <span className="text-primary font-bold">
-                        {' '}
                         analyses de sentiment
-                    </span>
+                    </span>{' '}
                     qui permettent de déterminer les{' '}
                     <span className="text-primary font-bold">réactions</span> et
                     les{' '}
@@ -87,9 +86,11 @@ const Analyses = () => {
                     d'un film avant même sa sortie.
                 </p>
                 <div className="pt-9 flex justify-end">
-                    <button className="text-4xl cursor-pointer decoration-none text-neon border-4 border-neon py-4 px-3 font-josefin rounded-lg btn-shadows neon-btn">
-                        Découvrez nos films
-                    </button>
+                    <Link to="/movies">
+                        <button className="text-4xl cursor-pointer decoration-none text-neon border-4 border-neon py-4 px-3 font-josefin rounded-lg btn-shadows neon-btn">
+                            Découvrez nos films
+                        </button>
+                    </Link>
                 </div>
             </div>
         </section>

@@ -14,6 +14,12 @@
   text-shadow: 0 0 0.125em hsl(0 0% 100% / 0.2), 0 0 0.45em currentColor;
   box-shadow: inset 0 0 0.125em currentColor, 0 0 0.45em currentColor;
 }
+.badge-border-shadow {
+  box-shadow: inset 0 0 0.125em currentColor, 0 0 0.45em currentColor;
+}
+.badge-text-shadow{
+  text-shadow: 0 0 0.10em hsl(0 0% 100% / 0.2), 0 0 0.01em currentColor;
+}
 
 .neon-btn{
   position: relative;
@@ -43,32 +49,35 @@
   text-shadow: 0 0 0.125em hsl(240, 25%, 9% / 0.3), 0 0 0.45em currentColor;
 }
 
+.img-shadow{
+  box-shadow: rgba(255, 255, 255, 1) 0px -41px 100px 25px inset
+}
 
-// .neon-btn::before{
-//   content: "";
-//   position: absolute;
-//   top: 120%;
-//   left: 0;
-//   width: 100%;
-//   height: 100%;
-//   background: currentColor;
+.movie-card:hover .movie-card-content{
+  opacity: 1;
+  transition: all 0.2s linear;
+}
 
-//   filter: blur(1em);
-//   opacity: 0.7;
-//   transform : perspective(1em) rotateX(40deg) scale(0.8,0.35);
-// }
+.movie-card-genres span:not(:last-child)::after {
+  content: "●";
+  margin: 0 5px;
+  font-size : 8px;
+}
 
 
+.swiper-button-prev {
+    left : -2px!important;
+    z-index: 5;
+}
+.swiper-button-next {
+  right : 0px!important;
+  z-index: 5;
+}
+:root {
+  --swiper-navigation-color: #BB004B;
+}
+:root{
+  --swiper-pagination-color: #BB004B;
+}
 
-  // .text-stroke{ 
-  //   -webkit-text-stroke: 0.3vw white;
-  //   color : transparent;
-  //   letter-spacing: 3px;
-  // }
-
-  // .text-no-stroke{ 
-  //   -webkit-text-stroke: 0vw #1e1d2e;
-  //   color : transparent;
-  //   letter-spacing: 3px;
-  // }
 

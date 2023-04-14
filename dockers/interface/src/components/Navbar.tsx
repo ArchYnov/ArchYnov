@@ -17,7 +17,6 @@ const Navbar = () => {
     }
 
     const scrollPosition = useScrollPosition()
-    console.log(scrollPosition)
 
     return (
         <nav
@@ -25,7 +24,7 @@ const Navbar = () => {
                 scrollPosition > 0
                     ? 'shadow-md shadow-primary bg-background'
                     : 'shadow-none bg-background',
-                'transition-shadow w-full flex py-6 justify-between items-center navbar fixed top-0 z-10'
+                'transition-shadow w-full flex py-6 justify-between items-center navbar fixed top-0 z-50'
             )}
         >
             <div className="ml-5 flex items-center">
@@ -40,7 +39,7 @@ const Navbar = () => {
                         className={({ isActive }) =>
                             isActive
                                 ? 'text-primary font-poppins font-medium cursor-pointer text-[16px] mr-10'
-                                : 'text-white  font-poppins font-normal cursor-pointer text-[16px] mr-10'
+                                : 'text-white font-poppins font-normal cursor-pointer text-[16px] mr-10'
                         }
                     >
                         {nav.title}
