@@ -18,7 +18,6 @@ NewRSS -> Every now and then new articles are posted on their respective website
 In term of database we use MongoDB (https://www.mongodb.com/), as we said before  HDFS (https://hadoop.apache.org/) and Redis for API keys.
 """
 
-import schedule
 import time
 from tools.mongo import MongodbClient
 from transformers import pipeline

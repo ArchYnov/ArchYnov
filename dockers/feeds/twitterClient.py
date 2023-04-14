@@ -101,8 +101,9 @@ class TwitterClient(object):
                     'nombre_retweet': tweet.retweet_count,
                     'nombre_like': tweet.favorite_count,
                 },
-                'tmdb': str(movie_id),
-                '_sentiment_analysis' : 'n/a'
+                '_tmdb_id': str(movie_id),
+                '_sentiment_analysis' : 'n/a',
+                '_query' : query.split(' ')[0]
             })
         temp_action = actions
         for index, value in enumerate(actions):
