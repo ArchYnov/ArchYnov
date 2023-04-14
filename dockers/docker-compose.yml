@@ -161,7 +161,7 @@ services:
       context: ./
       dockerfile: api/DockerFile
     volumes:
-      - ./api:/usr/app
+      - ./api:/app
     ports:
       - 5000:5000
     depends_on:
