@@ -1,3 +1,4 @@
+from datetime import datetime
 from bson import ObjectId
 from pydantic import BaseModel, Field
 
@@ -27,11 +28,12 @@ class MovieModel(BaseModel):
     overview: str | None = Field()
     popularity: float | None = Field()
     poster_path: str | None = Field()
-    release_date: str | None = Field()
+    release_date: datetime | None = Field()
     title: str | None = Field()
     video: bool | None = Field()
     vote_average: float | None = Field()
     vote_count: int | None = Field()
+    encoded_pic: str | None = Field()
  
     class Config:
         allow_population_by_field_name = True
