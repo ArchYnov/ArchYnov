@@ -11,8 +11,13 @@ router = APIRouter(prefix="/movies", tags=["movies"])
 def deps_service(request: Request):
     return MovieService(request.app.mongodb_client)
 
-def parameters(filters: str = None, limit: int = 100, offset: int = 0, fields: str = {}):
+def parameters(filters: str = None, limit: int = 100, offset: int = 0, fields: str = {}, sort: str = None):
     # print(filters)
+    if sort:
+        sort = sort.split(",")
+        sort = [(field[1:], DESCENDING) if field[0] == "-" else (field, ASCENDING) for field in sort]
+    print(sort)
+
     if filters:
         filters = filters.split(";")
         filters = get_filter(filters)
@@ -41,7 +46,6 @@ async def all(service: MovieService = Depends(deps_service), params: dict = Depe
     limit = params["limit"]
     offset = params["offset"]
     fields = params["fields"]
-    print(fields)
 
     filters_dict = {}
     sort_dict = [("id", ASCENDING)]
