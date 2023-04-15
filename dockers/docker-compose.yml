@@ -163,7 +163,7 @@ services:
     volumes:
       - ./api:/app
     ports:
-      - 5000:5000
+      - 5000:443
     depends_on:
       - mongo
     networks:
