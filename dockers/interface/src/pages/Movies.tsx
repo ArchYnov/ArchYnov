@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { FaChevronUp } from 'react-icons/fa'
-import { MovieCard, MoviesCarousel } from '../components'
+import { MoviesCarousel } from '../components'
 import { useQuery } from '@tanstack/react-query'
+import axios from 'axios'
 
 const Movies = () => {
     const [showScroll, setShowScroll] = useState(false)
@@ -20,50 +21,61 @@ const Movies = () => {
 
     window.addEventListener('scroll', checkScrollTop)
 
-    const movie = {
-        adult: false,
-        backdrop_path: '/2rVkDZFLN6DI5PAoraoe9m4IRMN.jpg',
-        genre_ids: [12, 14, 35],
-        id: 493529,
-        original_language: 'en',
-        original_title: 'Dungeons & Dragons: Honor Among Thieves',
-        overview:
-            'A charming thief and a band of unlikely adventurers undertake an epic heist to retrieve a lost relic, but things go dangerously awry when they run afoul of the wrong people.',
-        popularity: 560.108,
-        poster_path: '/6LuXaihVIoJ5FeSiFb7CZMtU7du.jpg',
-        release_date: '2023-03-23',
-        title: 'Dungeons & Dragons: Honor Among Thieves',
-        video: false,
-        vote_average: 7.6,
-        vote_count: 222,
-    }
-
-    const { isLoading, error, data } = useQuery({
-        queryKey: ['repoData'],
-        queryFn: () => fetch('http://localhost:3000').then((res) => res.json()),
+    const {
+        isLoading: newMoviesLoading,
+        error: newMoviesError,
+        data: new_movies,
+    } = useQuery({
+        queryKey: ['newMovies'],
+        queryFn: async () =>
+            await axios
+                .get(
+                    'http://localhost:5000/api/v1/movies?sort=-release_date&limit=12'
+                )
+                .then((res) => res.data.result),
     })
 
-    return (
-        <main className="h-screen bg-background pt-[104px]">
-            <h2
-                className="text-white
-                    font-newake text-4xl pb-1"
-            >
-                DERNIÈRES SORTIES
-            </h2>
-            <div className="flex">
-                <MovieCard movie={movie} />
-                <MovieCard movie={movie} />
-                <MovieCard movie={movie} />
-            </div>
+    const {
+        isLoading: mostPopularLoading,
+        error: mostPopularError,
+        data: most_popular_movies,
+    } = useQuery({
+        queryKey: ['popularMovies'],
+        queryFn: async () =>
+            await axios
+                .get(
+                    'http://localhost:5000/api/v1/movies?sort=vote_average&limit=12'
+                )
+                .then((res) => res.data.result),
+    })
 
-            <h2
-                className="text-white
-                    font-newake text-4xl pb-1"
-            >
-                LES PLUS APPRECIES
-            </h2>
-            <MoviesCarousel />
+    // const new_movies = data ? data : []
+
+    return (
+        <main className="bg-background pt-[104px] pb-10 px-9 min-h-full">
+            <div className="py-4">
+                <h2
+                    className="text-white
+                    font-newake text-6xl pb-1 text-center"
+                >
+                    DERNIÈRES SORTIES
+                </h2>
+                {/* <MoviesCarousel movies={newMovies} /> */}
+                {!newMoviesLoading && new_movies && (
+                    <MoviesCarousel movies={new_movies} />
+                )}
+            </div>
+            <div className="py-4">
+                <h2
+                    className="text-white
+                    font-newake text-6xl pb-1 pt-4 text-center"
+                >
+                    LES PLUS APPRECIES
+                </h2>
+                {!mostPopularLoading && most_popular_movies && (
+                    <MoviesCarousel movies={most_popular_movies} />
+                )}
+            </div>
             <button
                 className={
                     'scrollTop bg-primary text-white rounded-full text-center fixed bottom-4 right-4 h-12 w-12 flex justify-center items-center cursor-pointer shadow-md transition-opacity duration-300' +
