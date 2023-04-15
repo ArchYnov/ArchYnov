@@ -12,23 +12,22 @@ def deps_service(request: Request):
     return MovieService(request.app.mongodb_client)
 
 def parameters(filters: str = None, limit: int = 100, offset: int = 0, fields: str = {}, sort: str = None):
-    # print(filters)
     if sort:
         sort = sort.split(",")
         sort = [(field[1:], DESCENDING) if field[0] == "-" else (field, ASCENDING) for field in sort]
-    print(sort)
+    else:
+        sort = [("id", ASCENDING)]
 
     if filters:
         filters = filters.split(";")
         filters = get_filter(filters)
-        # print(filters)
+
     if fields:
         fields = fields.split(",")
         fields = {field: 1 for field in fields}
     fields["_id"] = 0
 
-    return {"filters": filters, "limit": limit, "offset": offset, "fields": fields}
-
+    return {"filters": filters, "limit": limit, "offset": offset, "fields": fields, "sort": sort}
 
 
 @router.options("/", status_code=status.HTTP_200_OK)
@@ -37,50 +36,34 @@ async def options():
         "methods": ["GET", "OPTIONS"],
     }
 
-# print(router.dependency_overrides_provider)
-# async def all(service: MovieService = Depends(deps_service), limit: int = 100, offset: int = 0, filters: str = None):
 @router.get("/", response_description="Response all movies", status_code=status.HTTP_200_OK)
 async def all(service: MovieService = Depends(deps_service), params: dict = Depends(parameters)) -> Any:
-    # print(params)
     filters = params["filters"]
     limit = params["limit"]
     offset = params["offset"]
     fields = params["fields"]
+    sort = params["sort"]
 
     filters_dict = {}
-    sort_dict = [("id", ASCENDING)]
-    # genre_transcript = {28: 'Action', 12: 'Adventure', 16: 'Animation', 35: 'Comedy', 80: 'Crime', 99: 'Documentary', 18: 'Drama', 10751: 'Family', 14: 'Fantasy', 36: 'History', 27: 'Horror', 10402: 'Music', 9648: 'Mystery', 10749: 'Romance', 878: 'Science Fiction', 10770: 'TV Movie', 53: 'Thriller',10752: 'War',37: 'Western',10759: 'Action & Adventure',10762: 'Kids',10763: 'News',10764: 'Reality',10765: 'Sci-Fi & Fantasy', 10766: 'Soap',10767: 'Talk',10768: 'War & Politics'}
     try:
         if filters:
             for key, value in filters.items():
                 check_property(MovieFilter, key)
                 check_operator(value["operator"])
                 v = get_value_type(MovieFilter, key, value["value"])
-                # print(key, value["operator"], v)
 
                 if key == "genre_ids":
                     if value["operator"] == "$in" or value["operator"] == "$nin":
-                        # filters_dict[key] = {"$elemMatch": { "title": {value["operator"]: v} }}
                         filters_dict[f'{key}.title'] = {value["operator"]: v}
                     else:
                         filters_dict[f'{key}.title'] = {"$all": v}
-                    # genre = [{str(g): genre_transcript[g]} for g in genre_transcript if genre_transcript[g] in v]
-                    # if not genre:
-                    #     raise Exception("Genre not found")
-                    # if value["operator"] == "$in" or value["operator"] == "$nin":
-                    #     # filters_dict[key] = {"$elemMatch": { value["operator"]: genre }}
-                    #     filters_dict[key] = { value["operator"]: genre }
-                    # else:
-                    #     filters_dict[key] = {"$all": genre }
                 else:
                     filters_dict[key] = { value["operator"]: v }
-            # print(filters_dict)
     except Exception as e:
         print(e)
         return Response(status_code=status.HTTP_400_BAD_REQUEST, content=e.args[0])
     
-    movies = [MovieModel(**movie).dict(exclude_unset=True) for movie in service.find_by_filter(filters_dict, sort_dict, limit, offset, fields)]
-    # print(movies)
+    movies = [MovieModel(**movie).dict(exclude_unset=True) for movie in service.find_by_filter(filters_dict, sort, limit, offset, fields)]
     
     if not movies:
         return {
