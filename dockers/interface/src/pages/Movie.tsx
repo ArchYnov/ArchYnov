@@ -56,7 +56,6 @@ const Movie = () => {
 
     const movie = data ? data : {}
 
-    console.log(typeof movie.vote_average)
     let icon
     if (movie.vote_average > 5) {
         icon = <FaThumbsUp />
@@ -72,22 +71,24 @@ const Movie = () => {
                     <img
                         // src={movie.poster_path}
                         className="max-w-full max-h-full rounded-3xl"
-                        src="https://image.tmdb.org/t/p/w500/6LuXaihVIoJ5FeSiFb7CZMtU7du.jpg"
+                        src={`data:image/png;base64,${movie.encoded_pic}`}
                         alt={movie.title}
                     />
                 </div>
                 <div className="pl-20 mt-3 col-span-3 h-[90%] flex flex-col justify-between">
-                    <h1 className="text-primary text-6xl font-newake neon-title-pink">
-                        {movie.title}
-                    </h1>
-                    <div className="flex flex-wrap">
-                        {movie.genre_ids?.map((genre: any) => (
-                            <GenreBadge genre={genre.title} />
-                        ))}
+                    <div>
+                        <h1 className="text-primary text-6xl font-newake neon-title-pink pb-6">
+                            {movie.title}
+                        </h1>
+                        <div className="flex flex-wrap pb-6">
+                            {movie.genre_ids?.map((genre: any) => (
+                                <GenreBadge genre={genre.title} />
+                            ))}
+                        </div>
+                        <p className="text-white text-justify font-poppins text-xl">
+                            {movie.overview}
+                        </p>
                     </div>
-                    <p className="text-white text-justify font-poppins text-xl">
-                        {movie.overview}
-                    </p>
                     <div className="grid grid-cols-3 gap-10">
                         <StatBadge
                             note={movie.vote_average}

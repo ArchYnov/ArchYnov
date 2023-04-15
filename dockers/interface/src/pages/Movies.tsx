@@ -21,15 +21,35 @@ const Movies = () => {
 
     window.addEventListener('scroll', checkScrollTop)
 
-    const { isLoading, error, data } = useQuery({
+    const {
+        isLoading: newMoviesLoading,
+        error: newMoviesError,
+        data: new_movies,
+    } = useQuery({
         queryKey: ['newMovies'],
         queryFn: async () =>
             await axios
-                .get('http://localhost:5000/api/v1/movies/new?limit=12')
+                .get(
+                    'http://localhost:5000/api/v1/movies?sort=-release_date&limit=12'
+                )
                 .then((res) => res.data.result),
     })
 
-    const movies = data ? data : []
+    const {
+        isLoading: mostPopularLoading,
+        error: mostPopularError,
+        data: most_popular_movies,
+    } = useQuery({
+        queryKey: ['popularMovies'],
+        queryFn: async () =>
+            await axios
+                .get(
+                    'http://localhost:5000/api/v1/movies?sort=vote_average&limit=12'
+                )
+                .then((res) => res.data.result),
+    })
+
+    // const new_movies = data ? data : []
 
     return (
         <main className="bg-background pt-[104px] pb-10 px-9 min-h-full">
@@ -41,16 +61,20 @@ const Movies = () => {
                     DERNIÈRES SORTIES
                 </h2>
                 {/* <MoviesCarousel movies={newMovies} /> */}
-                {!isLoading && data && <MoviesCarousel movies={movies} />}
+                {!newMoviesLoading && new_movies && (
+                    <MoviesCarousel movies={new_movies} />
+                )}
             </div>
             <div className="py-4">
                 <h2
                     className="text-white
-                    font-newake text-6xl pb-1 text-center"
+                    font-newake text-6xl pb-1 pt-4 text-center"
                 >
                     LES PLUS APPRECIES
                 </h2>
-                {!isLoading && data && <MoviesCarousel movies={data} />}
+                {!mostPopularLoading && most_popular_movies && (
+                    <MoviesCarousel movies={most_popular_movies} />
+                )}
             </div>
             <button
                 className={

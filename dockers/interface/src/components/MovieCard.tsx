@@ -2,8 +2,6 @@ import React from 'react'
 import classnames from 'classnames'
 
 const MovieCard = ({ movie }: { movie: any }) => {
-    let movieClass = ''
-
     const movieClasses = classnames({
         'bg-red-500': movie.vote_average <= 2.5,
         'bg-yellow-500': movie.vote_average > 2.5 && movie.vote_average <= 7.5,
@@ -14,7 +12,7 @@ const MovieCard = ({ movie }: { movie: any }) => {
             <div>
                 <img
                     // src={movie.poster_path}
-                    src="https://image.tmdb.org/t/p/w500/6LuXaihVIoJ5FeSiFb7CZMtU7du.jpg"
+                    src={`data:image/png;base64,${movie.encoded_pic}`}
                     alt={movie.title}
                 />
             </div>

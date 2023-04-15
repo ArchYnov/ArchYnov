@@ -8,14 +8,20 @@ from app.utils.operator import check_operator, check_property, get_filter, get_v
 
 router = APIRouter(prefix="/movies", tags=["movies"])
 
+
 def deps_service(request: Request):
     return MovieService(request.app.mongodb_client)
+
 
 def parameters(filters: str = None, limit: int = 100, offset: int = 0, fields: str = {}, sort: str = None):
     # print(filters)
     if sort:
         sort = sort.split(",")
-        sort = [(field[1:], DESCENDING) if field[0] == "-" else (field, ASCENDING) for field in sort]
+        sort = [(field[1:], DESCENDING) if field[0] ==
+                "-" else (field, ASCENDING) for field in sort]
+    else:
+        sort = [("id", ASCENDING)]
+
     print(sort)
 
     if filters:
@@ -27,8 +33,7 @@ def parameters(filters: str = None, limit: int = 100, offset: int = 0, fields: s
         fields = {field: 1 for field in fields}
     fields["_id"] = 0
 
-    return {"filters": filters, "limit": limit, "offset": offset, "fields": fields}
-
+    return {"filters": filters, "limit": limit, "offset": offset, "fields": fields, "sort": sort}
 
 
 @router.options("/", status_code=status.HTTP_200_OK)
@@ -39,6 +44,8 @@ async def options():
 
 # print(router.dependency_overrides_provider)
 # async def all(service: MovieService = Depends(deps_service), limit: int = 100, offset: int = 0, filters: str = None):
+
+
 @router.get("/", response_description="Response all movies", status_code=status.HTTP_200_OK)
 async def all(service: MovieService = Depends(deps_service), params: dict = Depends(parameters)) -> Any:
     # print(params)
@@ -46,6 +53,7 @@ async def all(service: MovieService = Depends(deps_service), params: dict = Depe
     limit = params["limit"]
     offset = params["offset"]
     fields = params["fields"]
+    sort = params["sort"]
 
     filters_dict = {}
     sort_dict = [("id", ASCENDING)]
@@ -73,15 +81,16 @@ async def all(service: MovieService = Depends(deps_service), params: dict = Depe
                     # else:
                     #     filters_dict[key] = {"$all": genre }
                 else:
-                    filters_dict[key] = { value["operator"]: v }
+                    filters_dict[key] = {value["operator"]: v}
             # print(filters_dict)
     except Exception as e:
         print(e)
         return Response(status_code=status.HTTP_400_BAD_REQUEST, content=e.args[0])
-    
-    movies = [MovieModel(**movie).dict(exclude_unset=True) for movie in service.find_by_filter(filters_dict, sort_dict, limit, offset, fields)]
+
+    movies = [MovieModel(**movie).dict(exclude_unset=True)
+              for movie in service.find_by_filter(filters_dict, sort, limit, offset, fields)]
     # print(movies)
-    
+
     if not movies:
         return {
             "description": "Response all movies",
@@ -95,11 +104,13 @@ async def all(service: MovieService = Depends(deps_service), params: dict = Depe
         "result": movies
     }
 
+
 @router.get("/best", response_description="Response best movies", status_code=status.HTTP_200_OK)
 async def best(service: MovieService = Depends(deps_service), limit: int = 100, offset: int = 0):
     filters_dict = {}
     sort_dict = [("popularity", DESCENDING)]
-    movies = [MovieModel(**movie) for movie in service.find_by_filter(filters_dict, sort_dict, limit, offset)]
+    movies = [MovieModel(
+        **movie) for movie in service.find_by_filter(filters_dict, sort_dict, limit, offset)]
 
     if not movies:
         return {
@@ -114,11 +125,13 @@ async def best(service: MovieService = Depends(deps_service), limit: int = 100, 
         "result": movies
     }
 
+
 @router.get("/new", response_description="Response new movies", status_code=status.HTTP_200_OK)
 async def new(service: MovieService = Depends(deps_service), limit: int = 100, offset: int = 0):
     filters_dict = {}
     sort_dict = [("release_date", DESCENDING)]
-    movies = [MovieModel(**movie) for movie in service.find_by_filter(filters_dict, sort_dict, limit, offset)]
+    movies = [MovieModel(
+        **movie) for movie in service.find_by_filter(filters_dict, sort_dict, limit, offset)]
 
     if not movies:
         return {
@@ -133,6 +146,7 @@ async def new(service: MovieService = Depends(deps_service), limit: int = 100, o
         "result": movies
     }
 
+
 @router.get("/number", response_description="Reponse number movies", status_code=status.HTTP_200_OK)
 async def number(service: MovieService = Depends(deps_service)):
 
@@ -143,19 +157,19 @@ async def number(service: MovieService = Depends(deps_service)):
         "result": service.count()
     }
 
+
 @router.get("/{id}", response_description="Reponse movies by id", status_code=status.HTTP_200_OK)
 async def by_id(response: Response, service: MovieService = Depends(deps_service), id: int | str = None):
     movie = service.find_by_id(id)
 
     if not movie:
-        response.status_code = status.HTTP_404_NOT_FOUND  
+        response.status_code = status.HTTP_404_NOT_FOUND
         return {
             "description": "Reponse movies by id",
             "result": None
         }
-    
+
     return {
         "description": "Reponse movies by id",
         "result": MovieModel(**movie)
     }
-    
