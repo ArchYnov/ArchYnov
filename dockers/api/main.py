@@ -1,8 +1,12 @@
 from fastapi import Depends, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
+
 from app.routes.movies import router as movies_router
 from mongodb import Mongo
 from config import Settings
-from fastapi.middleware.cors import CORSMiddleware
+
 
 settings = Settings()
 app = FastAPI()
@@ -13,18 +17,22 @@ app.mongodb_client = mongo
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins='*',
     allow_credentials=True,
-    allow_methods=[""],
-    allow_headers=[""],
+    allow_methods=["*"],
+    allow_headers=["*"]
 )
-
+app.add_middleware(
+    TrustedHostMiddleware,
+    allowed_hosts=["*"]
+)
+app.add_middleware(
+    HTTPSRedirectMiddleware
+)
 
 @app.on_event("startup")
 async def startup():
     await app.mongodb_client.connect()
     print("Connected to the MongoDB database!", mongo.client)
-
 
 @app.on_event("shutdown")
 async def shutdown():
