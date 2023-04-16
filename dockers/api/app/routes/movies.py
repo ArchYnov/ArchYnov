@@ -27,7 +27,7 @@ def parameters(filters: str = None, limit: int = 100, offset: int = 0, fields: s
     if fields:
         fields = fields.split(",")
         fields = {field: 1 for field in fields}
-    fields["_id"] = 0
+    # fields["_id"] = 1
 
     return {"filters": filters, "limit": limit, "offset": offset, "fields": fields, "sort": sort}
 
@@ -39,7 +39,7 @@ async def options():
     }
 
 @router.get("/", response_description="Response all movies", status_code=status.HTTP_200_OK)
-async def all(service: MovieService = Depends(deps_service), params: dict = Depends(parameters)) -> Any:
+async def all(service: MovieService = Depends(deps_service), params: dict = Depends(parameters)):
     filters = params["filters"]
     limit = params["limit"]
     offset = params["offset"]
@@ -65,7 +65,10 @@ async def all(service: MovieService = Depends(deps_service), params: dict = Depe
         print(e)
         return Response(status_code=status.HTTP_400_BAD_REQUEST, content=e.args[0])
     
-    movies = [MovieModel(**movie).dict(exclude_unset=True) for movie in service.find_by_filter(filters_dict, sort, limit, offset, fields)]
+    # dd = service.find_by_filter(filters_dict, sort, limit, offset, fields)
+    # print(MovieModel(**dd[0]))
+    
+    movies = [MovieModel(**movie) for movie in service.find_by_filter(filters_dict, sort, limit, offset, fields)]
  
     if not movies:
         return {
