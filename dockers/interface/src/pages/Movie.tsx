@@ -15,6 +15,13 @@ const Movie = () => {
 
     const movie = data ? data : {}
 
+    function formatDate(date: any) {
+        const d = new Date(date)
+        const day = d.getDate().toString().padStart(2, '0')
+        const month = (d.getMonth() + 1).toString().padStart(2, '0')
+        const year = d.getFullYear().toString()
+        return `${day}/${month}/${year}`
+    }
     return (
         <main className="bg-background pt-[104px] h-screen min-h-screen">
             <section className="h-full grid grid-flow-col w-full px-[5%]">
@@ -35,8 +42,11 @@ const Movie = () => {
                                 <GenreBadge genre={genre.title} />
                             ))}
                         </div>
-                        <p className="text-white text-justify font-poppins text-xl">
+                        <p className="text-white text-justify font-poppins text-xl pb-6">
                             {movie.overview}
+                        </p>
+                        <p className="font-poppins text-white text-justify font-thin">
+                            Realease date : {formatDate(movie.release_date)}
                         </p>
                     </div>
                     <div className="grid grid-cols-3 gap-10">
