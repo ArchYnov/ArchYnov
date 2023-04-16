@@ -8,16 +8,15 @@ const MovieCard = ({ movie }: { movie: any }) => {
         'bg-green-500': movie.vote_average >= 7.5,
     })
     return (
-        <div className="w-65 h-full m-8 hover:scale-[1.12] transition ease-in-out relative hover:shadow-inner cursor-pointer card-shadow movie-card">
+        <div className="w-65 m-8 hover:scale-[1.12] transition ease-in-out relative hover:shadow-inner cursor-pointer card-shadow movie-card">
             <div>
                 <img
-                    // src={movie.poster_path}
                     src={`data:image/png;base64,${movie.encoded_pic}`}
                     alt={movie.title}
                 />
             </div>
             <div className="absolute bottom-0 left-0 opacity-0 movie-card-content w-full bg-black bg-opacity-80 h-full"></div>
-            <div className="absolute bottom-0 left-0 opacity-0 movie-card-content w-full p-4">
+            <div className="absolute bottom-0 left-0 opacity-0 movie-card-content w-full p-4 h-fit">
                 <h2 className="text-white text-lg font-poppins font-medium">
                     {movie.title}
                 </h2>

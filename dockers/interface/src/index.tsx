@@ -3,7 +3,7 @@ import './assets/style/index.scss'
 import Root from './views/Root'
 import reportWebVitals from './reportWebVitals'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import { Home, Movies, Movie, News } from './pages'
+import { Home, Movies, Movie, News, AllMovies } from './pages'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
@@ -23,12 +23,16 @@ const router = createBrowserRouter([
                 element: <Movies />,
             },
             {
-                path: 'movies/:id',
+                path: 'movie/:id',
                 element: <Movie />,
             },
             {
                 path: 'news',
                 element: <News />,
+            },
+            {
+                path: 'movies/all',
+                element: <AllMovies />,
             },
         ],
     },

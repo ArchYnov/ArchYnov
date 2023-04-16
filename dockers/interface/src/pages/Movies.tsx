@@ -1,26 +1,9 @@
-import { useState } from 'react'
-import { FaChevronUp } from 'react-icons/fa'
-import { MoviesCarousel } from '../components'
+import { MoviesCarousel, ScrollTopButton } from '../components'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
+import { Link } from 'react-router-dom'
 
 const Movies = () => {
-    const [showScroll, setShowScroll] = useState(false)
-
-    const checkScrollTop = () => {
-        if (!showScroll && window.pageYOffset > 400) {
-            setShowScroll(true)
-        } else if (showScroll && window.pageYOffset <= 400) {
-            setShowScroll(false)
-        }
-    }
-
-    const scrollTop = () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-
-    window.addEventListener('scroll', checkScrollTop)
-
     const {
         isLoading: newMoviesLoading,
         error: newMoviesError,
@@ -30,7 +13,7 @@ const Movies = () => {
         queryFn: async () =>
             await axios
                 .get(
-                    'http://localhost:5000/api/v1/movies?sort=-release_date&limit=12'
+                    'https://localhost:5000/api/v1/movies?sort=-release_date&limit=12'
                 )
                 .then((res) => res.data.result),
     })
@@ -44,15 +27,13 @@ const Movies = () => {
         queryFn: async () =>
             await axios
                 .get(
-                    'http://localhost:5000/api/v1/movies?sort=vote_average&limit=12'
+                    'https://localhost:5000/api/v1/movies?sort=vote_average&limit=12'
                 )
                 .then((res) => res.data.result),
     })
 
-    // const new_movies = data ? data : []
-
     return (
-        <main className="bg-background pt-[104px] pb-10 px-9 min-h-full">
+        <main className="bg-background pt-[90px] pb-10 px-9 min-h-screen">
             <div className="py-4">
                 <h2
                     className="text-white
@@ -60,7 +41,6 @@ const Movies = () => {
                 >
                     DERNIÈRES SORTIES
                 </h2>
-                {/* <MoviesCarousel movies={newMovies} /> */}
                 {!newMoviesLoading && new_movies && (
                     <MoviesCarousel movies={new_movies} />
                 )}
@@ -76,16 +56,16 @@ const Movies = () => {
                     <MoviesCarousel movies={most_popular_movies} />
                 )}
             </div>
-            <button
-                className={
-                    'scrollTop bg-primary text-white rounded-full text-center fixed bottom-4 right-4 h-12 w-12 flex justify-center items-center cursor-pointer shadow-md transition-opacity duration-300' +
-                    (showScroll ? ' opacity-100' : ' opacity-0')
-                }
-                onClick={scrollTop}
-                style={{ display: showScroll ? 'flex' : 'none' }}
-            >
-                <FaChevronUp size={20} className="mt-[-2px]" />
-            </button>
+            <div className="py-4">
+                <div className="pt-9 flex justify-center">
+                    <Link to="/movies/all">
+                        <button className="text-4xl cursor-pointer decoration-none text-neon border-4 border-neon py-4 px-3 font-josefin rounded-lg btn-shadows neon-btn">
+                            Tous les films
+                        </button>
+                    </Link>
+                </div>
+            </div>
+            <ScrollTopButton />
         </main>
     )
 }

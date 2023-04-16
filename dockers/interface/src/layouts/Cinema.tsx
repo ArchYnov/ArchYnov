@@ -11,7 +11,7 @@ const Cinema = () => {
 
     const { isLoading, error, data } = useQuery(['moviesNumber'], () =>
         axios
-            .get('http://localhost:5000/api/v1/movies/number')
+            .get('https://localhost:5000/api/v1/movies/number')
             .then((res) => res.data.result)
     )
 

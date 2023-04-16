@@ -4,10 +4,10 @@ const StatBadge = ({
     review_nbr,
     on,
 }: {
-    note: any
-    source: any
-    review_nbr: any
-    on: any
+    note: string
+    source: string
+    review_nbr: number
+    on: number
 }) => {
     return (
         <div className="bg-transparent h-fit px-4 py-4 rounded-xl text-center justify-center items-center my-4 mr-8  text-neon border-4 border-neon badge-border-shadow w-full">

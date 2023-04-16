@@ -18,6 +18,7 @@ app.mongodb_client = mongo
 
 app.add_middleware(
     CORSMiddleware,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
@@ -30,10 +31,12 @@ app.add_middleware(
     HTTPSRedirectMiddleware
 )
 
+
 @app.on_event("startup")
 async def startup():
     await app.mongodb_client.connect()
     print("Connected to the MongoDB database!", mongo.client)
+
 
 @app.on_event("shutdown")
 async def shutdown():

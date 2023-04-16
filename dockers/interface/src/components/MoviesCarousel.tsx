@@ -37,7 +37,7 @@ const Carousel = ({ movies }: { movies: any[] }) => {
                 {movies?.map((movie, id) => (
                     <SwiperSlide key={id}>
                         <Link
-                            to={`/movies/${movie.id}`}
+                            to={`/movie/${movie.id}`}
                             className="w-full h-full"
                         >
                             <MovieCard key={movie.id} movie={movie} />
