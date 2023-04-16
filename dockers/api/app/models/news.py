@@ -13,10 +13,10 @@ class SetimentAnalysisModel(BaseModel):
     score: float | None = Field()
 
 class NewsModel(BaseModel):
-    oid: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    id: str = Field(default_factory=PyObjectId, alias="_id")
     index: str | None = Field(alias="_index")
     source: SourceModel | None = Field(alias="_source")
-    sentiment_analysis: SetimentAnalysisModel | None = Field(alias="_sentiment_analysis")
+    sentiment_analysis: SetimentAnalysisModel | str | None = Field(alias="_sentiment_analysis")
 
     class Config:
         allow_population_by_field_name = True
@@ -26,12 +26,6 @@ class NewsModel(BaseModel):
         }
 
 class NewsFilter(BaseModel):
-    index: str | None = Field(alias="_index")
-    source: dict | None = Field(alias="_source")
-    sentiment_analysis: dict | None = Field(alias="_sentiment_analysis")
-
-    class Config:
-        fields = {
-            "source": {"alias": "_source"}, 
-            "sentiment_analysis": {"alias": "_sentiment_analysis"}
-        }
+    index: str | None
+    source: dict | None
+    sentiment_analysis: dict | None

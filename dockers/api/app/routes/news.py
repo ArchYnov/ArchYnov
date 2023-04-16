@@ -53,7 +53,11 @@ async def all(service: NewsService = Depends(deps_service), params: dict = Depen
     try:
         if filters:
             for key, value in filters.items():
-                check_property(NewsFilter, key)
+                print(NewsModel.__fields__.values())
+                properties = [field.alias for field in NewsModel.__fields__.values()]
+                # print(properties)
+                # print(NewsFilter.__fields__.values())
+                check_property(properties, key)
                 check_operator(value["operator"])
                 v = get_value_type(NewsFilter, key, value["value"])
                 filters_dict[key] = { value["operator"]: v }
