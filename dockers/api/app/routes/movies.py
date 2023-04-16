@@ -126,11 +126,26 @@ async def new(service: MovieService = Depends(deps_service), limit: int = 100, o
 @router.get("/number", response_description="Reponse number movies", status_code=status.HTTP_200_OK)
 async def number(service: MovieService = Depends(deps_service)):
 
-    d = service.count_by_filter({})
-
     return {
         "description": "Reponse number movies",
         "result": service.count()
+    }
+
+@router.get("/genres", response_description="Reponse all genres", status_code=status.HTTP_200_OK)
+async def genres(service: MovieService = Depends(deps_service)):
+    genres = service.distinct("genre_ids.title", {})
+
+    if not genres:
+        return {
+            "description": "Reponse all genres",
+            "count": 0,
+            "result": []
+        }
+
+    return {
+        "description": "Reponse all genres",
+        "count": len(genres),
+        "result": genres
     }
 
 

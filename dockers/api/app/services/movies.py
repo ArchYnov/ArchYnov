@@ -27,4 +27,7 @@ class MovieService():
     
     def find_by_aggregate(self, filter: list):
         return self._collection.aggregate(filter)
+    
+    def distinct(self, field: str, filter: dict):
+        return self._collection.distinct(field, filter)
 
