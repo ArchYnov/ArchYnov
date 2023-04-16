@@ -18,7 +18,6 @@ def check_operator(operator: str):
         raise Exception("Invalid operator")
 
 def check_property(properties: dict, property: str):
-    print(properties.__fields__.keys())
     if property not in properties.__fields__.keys():
         raise Exception("Invalid property")
 
