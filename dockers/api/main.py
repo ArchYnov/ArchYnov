@@ -5,6 +5,7 @@ from fastapi.middleware.trustedhost import TrustedHostMiddleware
 
 from app.routes.movies import router as movies_router
 from app.routes.news import router as news_router
+from app.routes.tweets import router as tweets_router
 from mongodb import Mongo
 from config import Settings
 
@@ -45,3 +46,4 @@ async def shutdown():
 
 app.include_router(movies_router, prefix=app.config.API_PREFIX, tags=["v1"])
 app.include_router(news_router, prefix=app.config.API_PREFIX, tags=["v1"])
+app.include_router(tweets_router, prefix=app.config.API_PREFIX, tags=["v1"])
