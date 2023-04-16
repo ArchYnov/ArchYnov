@@ -27,7 +27,7 @@ const Movies = () => {
         queryFn: async () =>
             await axios
                 .get(
-                    'https://localhost:5000/api/v1/movies?sort=vote_average&limit=12'
+                    'https://localhost:5000/api/v1/movies?sort=-vote_average&limit=12'
                 )
                 .then((res) => res.data.result),
     })
@@ -39,7 +39,7 @@ const Movies = () => {
                     className="text-white
                     font-newake text-6xl pb-1 text-center"
                 >
-                    DERNIÈRES SORTIES
+                    LATEST RELEASES
                 </h2>
                 {!newMoviesLoading && new_movies && (
                     <MoviesCarousel movies={new_movies} />
@@ -50,7 +50,7 @@ const Movies = () => {
                     className="text-white
                     font-newake text-6xl pb-1 pt-4 text-center"
                 >
-                    LES PLUS APPRECIES
+                    THE MOST APPRECIATED
                 </h2>
                 {!mostPopularLoading && most_popular_movies && (
                     <MoviesCarousel movies={most_popular_movies} />
@@ -60,7 +60,7 @@ const Movies = () => {
                 <div className="pt-9 flex justify-center">
                     <Link to="/movies/all">
                         <button className="text-4xl cursor-pointer decoration-none text-neon border-4 border-neon py-4 px-3 font-josefin rounded-lg btn-shadows neon-btn">
-                            Tous les films
+                            All movies
                         </button>
                     </Link>
                 </div>

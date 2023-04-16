@@ -3,16 +3,23 @@ import cinema_section from '../assets/backgrounds/cinema.png'
 import StatFrame from '../components/StatFrame'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
+import { StatBadge } from '../components'
 
 const Cinema = () => {
     // const { data, status } = useQuery('myData', () =>
     //     axios.get('/my-api-endpoint').then((res) => res.data)
     // )
 
-    const { isLoading, error, data } = useQuery(['moviesNumber'], () =>
+    const { data: movies_number } = useQuery(['moviesNumber'], () =>
         axios
             .get('https://localhost:5000/api/v1/movies/number')
             .then((res) => res.data.result)
+    )
+
+    const { data: genres_number } = useQuery(['genresNumber'], () =>
+        axios
+            .get('https://localhost:5000/api/v1/movies/genres')
+            .then((res) => res.data.count)
     )
 
     return (
@@ -37,7 +44,26 @@ const Cinema = () => {
                 </h1>
 
                 <p className="text-xl text-white font-josefin text-justify">
-                    Retrouvez un large choix de{' '}
+                    Find a wide selection of{' '}
+                    <span className="text-primary font-bold">movies</span> and{' '}
+                    <span className="text-primary font-bold">series</span> to
+                    perfect your{' '}
+                    <span className="text-primary font-bold">
+                        cinematographic culture
+                    </span>
+                    . Our catalog is{' '}
+                    <span className="text-primary font-bold">
+                        constantly updated
+                    </span>{' '}
+                    to offer you the{' '}
+                    <span className="text-primary font-bold"></span>latest
+                    releases, as well as the{' '}
+                    <span className="text-primary font-bold">most popular</span>{' '}
+                    titles. You can browse our collection of movies and series
+                    using our{' '}
+                    <span className="text-primary font-bold">filters</span>,
+                    which allow you to sort by genre, year.
+                    {/* Retrouvez un large choix de{' '}
                     <span className="text-primary font-bold">films</span> et{' '}
                     <span className="text-primary font-bold">séries</span> afin
                     de parfaire votre{' '}
@@ -62,11 +88,14 @@ const Cinema = () => {
                     </span>{' '}
                     du public. Vous pouvez parcourir notre collection de films
                     et de séries en utilisant nos filtres pratiques, qui vous
-                    permettent de trier par genre, année, réalisateur ou acteur.{' '}
+                    permettent de trier par genre, année, réalisateur ou acteur.{' '} */}
                 </p>
                 <div className="grid grid-cols-2 gap-10 pt-5">
-                    <StatFrame stat_name="Films / Séries" stat={data} />
-                    <StatFrame stat_name="Genres" stat="15" />
+                    <StatFrame
+                        stat_name="Movies / Series"
+                        stat={movies_number}
+                    />
+                    <StatFrame stat_name="Genres" stat={genres_number} />
                 </div>
             </div>
         </section>

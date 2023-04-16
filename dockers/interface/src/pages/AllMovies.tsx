@@ -19,6 +19,12 @@ const AllMovies = () => {
                 .then((res) => res.data.result),
     })
 
+    const { data: genres } = useQuery(['genres'], () =>
+        axios
+            .get('https://localhost:5000/api/v1/movies/genres')
+            .then((res) => res.data.result)
+    )
+
     const sortedMovies = all_movies?.sort((a: any, b: any) => {
         if (sortOrder === 'asc') {
             return a.release_date > b.release_date ? 1 : -1
@@ -37,32 +43,34 @@ const AllMovies = () => {
 
     return (
         <main className="bg-background pt-[90px] pb-10 px-9 min-h-screen">
-            <div className="flex justify-between items-center">
-                <h1 className="text-primary font-bold text-3xl">All Movies</h1>
-                <div>
-                    <select
-                        className="px-4 py-2 rounded-lg bg-white border border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
-                        onChange={(e) => setSelectedGenre(e.target.value)}
-                        value={selectedGenre}
-                    >
-                        <option value="">All Genres</option>
-                        <option value="Animation">Animation</option>
-                        <option value="Adventure">Adventure</option>
-                        <option value="Family">Family</option>
-                        <option value="Fantasy">Fantasy</option>
-                        <option value="Comedy">Comedy</option>
-                    </select>
-                    <select
-                        className="px-4 py-2 rounded-lg bg-white border border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 ml-4"
-                        onChange={(e) => setSortOrder(e.target.value)}
-                        value={sortOrder}
-                    >
-                        <option value="desc">
-                            Sort by Date (Newest First)
+            <h2
+                className="text-white
+                    font-newake text-6xl pb-1 text-center mb-10"
+            >
+                TOUS LES FILMS
+            </h2>
+
+            <div className="pb-5">
+                <select
+                    className="px-4 py-2 rounded-lg bg-white border border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+                    onChange={(e) => setSelectedGenre(e.target.value)}
+                    value={selectedGenre}
+                >
+                    <option value="">All Genres</option>
+                    {genres?.map((genre: any, index: any) => (
+                        <option key={index} value={genre}>
+                            {genre}
                         </option>
-                        <option value="asc">Sort by Date (Oldest First)</option>
-                    </select>
-                </div>
+                    ))}
+                </select>
+                <select
+                    className="px-4 py-2 rounded-lg bg-white border border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 ml-4"
+                    onChange={(e) => setSortOrder(e.target.value)}
+                    value={sortOrder}
+                >
+                    <option value="desc">Sort by Date (Newest First)</option>
+                    <option value="asc">Sort by Date (Oldest First)</option>
+                </select>
             </div>
             <div className="grid grid-cols-4">
                 {filteredMovies?.map((movie: any) => (

@@ -21,7 +21,7 @@ const Analyses = () => {
                     className="text-white
                     font-newake text-8xl pb-1"
                 >
-                    ANALYSES
+                    ANALYSIS
                 </h1>
 
                 <p className="text-xl text-white font-josefin text-justify">
@@ -88,7 +88,7 @@ const Analyses = () => {
                 <div className="pt-9 flex justify-end">
                     <Link to="/movies">
                         <button className="text-4xl cursor-pointer decoration-none text-neon border-4 border-neon py-4 px-3 font-josefin rounded-lg btn-shadows neon-btn">
-                            Découvrez nos films
+                            Check out our movies
                         </button>
                     </Link>
                 </div>

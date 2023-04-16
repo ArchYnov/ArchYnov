@@ -43,7 +43,7 @@ const Hero = () => {
                     className="font-newake text-white text-8xl cursor-pointer w-fit neon-title"
                     onClick={handleClickScrollToAnalyses}
                 >
-                    ANALYSES
+                    ANALYSIS
                 </h1>
             </div>
             <div className="flex align-center justify-center pr-[5%] relative">
