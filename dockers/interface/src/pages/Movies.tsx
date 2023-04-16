@@ -2,6 +2,7 @@ import { MoviesCarousel, ScrollTopButton } from '../components'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
+import { SyncLoader } from 'react-spinners'
 
 const Movies = () => {
     const {
@@ -41,10 +42,21 @@ const Movies = () => {
                 >
                     LATEST RELEASES
                 </h2>
-                {!newMoviesLoading && new_movies && (
+                {newMoviesLoading ? (
+                    <SyncLoader
+                        color="#BB004B"
+                        className="text-center my-10"
+                        size="30"
+                        speedMultiplier={0.5}
+                    />
+                ) : (
                     <MoviesCarousel movies={new_movies} />
                 )}
+                {/* {!newMoviesLoading && new_movies && (
+                    <MoviesCarousel movies={new_movies} />
+                )} */}
             </div>
+
             <div className="py-4">
                 <h2
                     className="text-white
@@ -52,9 +64,19 @@ const Movies = () => {
                 >
                     THE MOST APPRECIATED
                 </h2>
-                {!mostPopularLoading && most_popular_movies && (
+                {mostPopularLoading ? (
+                    <SyncLoader
+                        color="#BB004B"
+                        className="text-center my-10"
+                        size="30"
+                        speedMultiplier={0.5}
+                    />
+                ) : (
                     <MoviesCarousel movies={most_popular_movies} />
                 )}
+                {/* {!mostPopularLoading && most_popular_movies && (
+                    <MoviesCarousel movies={most_popular_movies} />
+                )} */}
             </div>
             <div className="py-4">
                 <div className="pt-9 flex justify-center">

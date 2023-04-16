@@ -15,5 +15,5 @@ export {
     GenreBadge,
     StatBadge,
     NewsCard,
-    ScrollTopButton
+    ScrollTopButton,
 }

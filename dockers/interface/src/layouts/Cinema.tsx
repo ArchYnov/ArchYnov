@@ -4,19 +4,28 @@ import StatFrame from '../components/StatFrame'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import { StatBadge } from '../components'
+import { SyncLoader } from 'react-spinners'
 
 const Cinema = () => {
     // const { data, status } = useQuery('myData', () =>
     //     axios.get('/my-api-endpoint').then((res) => res.data)
     // )
 
-    const { data: movies_number } = useQuery(['moviesNumber'], () =>
+    const {
+        isLoading: movieNumberisLoading,
+        error: movieNumberError,
+        data: movies_number,
+    } = useQuery(['moviesNumber'], () =>
         axios
             .get('https://localhost:5000/api/v1/movies/number')
             .then((res) => res.data.result)
     )
 
-    const { data: genres_number } = useQuery(['genresNumber'], () =>
+    const {
+        isLoading: genresNumberisLoading,
+        error: genresNumberError,
+        data: genres_number,
+    } = useQuery(['genresNumber'], () =>
         axios
             .get('https://localhost:5000/api/v1/movies/genres')
             .then((res) => res.data.count)
@@ -90,13 +99,22 @@ const Cinema = () => {
                     et de séries en utilisant nos filtres pratiques, qui vous
                     permettent de trier par genre, année, réalisateur ou acteur.{' '} */}
                 </p>
-                <div className="grid grid-cols-2 gap-10 pt-5">
-                    <StatFrame
-                        stat_name="Movies / Series"
-                        stat={movies_number}
+                {movieNumberisLoading && genresNumberisLoading ? (
+                    <SyncLoader
+                        color="#BB004B"
+                        className="text-center my-10"
+                        size="30"
+                        speedMultiplier={0.5}
                     />
-                    <StatFrame stat_name="Genres" stat={genres_number} />
-                </div>
+                ) : (
+                    <div className="grid grid-cols-2 gap-10 pt-5">
+                        <StatFrame
+                            stat_name="Movies / TV Shows"
+                            stat={movies_number}
+                        />
+                        <StatFrame stat_name="Genres" stat={genres_number} />
+                    </div>
+                )}
             </div>
         </section>
     )

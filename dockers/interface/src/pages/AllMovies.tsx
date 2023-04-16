@@ -3,6 +3,7 @@ import axios from 'axios'
 import { useState } from 'react'
 import { MovieCard, ScrollTopButton } from '../components'
 import { Link } from 'react-router-dom'
+import { SyncLoader } from 'react-spinners'
 
 const AllMovies = () => {
     const [selectedGenre, setSelectedGenre] = useState('')
@@ -47,7 +48,7 @@ const AllMovies = () => {
                 className="text-white
                     font-newake text-6xl pb-1 text-center mb-10"
             >
-                TOUS LES FILMS
+                ALL MOVIES
             </h2>
 
             <div className="pb-5">
@@ -72,13 +73,23 @@ const AllMovies = () => {
                     <option value="asc">Sort by Date (Oldest First)</option>
                 </select>
             </div>
-            <div className="grid grid-cols-4">
-                {filteredMovies?.map((movie: any) => (
-                    <Link to={`/movie/${movie.id}`} className="w-full">
-                        <MovieCard key={movie.id} movie={movie} />
-                    </Link>
-                ))}
-            </div>
+            {allMoviesLoading ? (
+                <SyncLoader
+                    color="#BB004B"
+                    className="text-center my-10"
+                    size="30"
+                    speedMultiplier={0.5}
+                />
+            ) : (
+                <div className="grid grid-cols-4">
+                    {filteredMovies?.map((movie: any) => (
+                        <Link to={`/movie/${movie.id}`} className="w-full">
+                            <MovieCard key={movie.id} movie={movie} />
+                        </Link>
+                    ))}
+                </div>
+            )}
+
             <ScrollTopButton />
         </main>
     )

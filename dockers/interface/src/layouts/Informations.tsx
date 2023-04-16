@@ -22,7 +22,7 @@ const Cinema = () => {
                     INFORMATIONS
                 </h1>
 
-                <p className="text-xl text-white font-josefin text-justify">
+                {/* <p className="text-xl text-white font-josefin text-justify">
                     Plongez dans l'univers fascinant de vos films et séries
                     préférés. Découvrez des{' '}
                     <span className="text-primary font-bold">
@@ -59,7 +59,6 @@ const Cinema = () => {
                     </span>
                     . Notre service est{' '}
                     <span className="text-primary font-bold">
-                        {' '}
                         la destination incontournable
                     </span>{' '}
                     pour les{' '}
@@ -68,6 +67,54 @@ const Cinema = () => {
                     </span>{' '}
                     en quête d'informations approfondies sur les films et séries
                     qu'ils adorent.
+                </p> */}
+                <p className="text-xl text-white font-josefin text-justify">
+                    Immerse yourself in the fascinating world of your favorite
+                    movies and TV shows. Discover{' '}
+                    <span className="text-primary font-bold">
+                        detailed plot summaries
+                    </span>
+                    , cast and director information. Whether you're an{' '}
+                    <span className="text-primary font-bold">
+                        avid moviegoer
+                    </span>{' '}
+                    or{' '}
+                    <span className="text-primary font-bold">
+                        just an entertainment enthusiast
+                    </span>
+                    , you'll find{' '}
+                    <span className="text-primary font-bold">
+                        exciting informations
+                    </span>{' '}
+                    about your favorite movies and series. Explore our{' '}
+                    <span className="text-primary font-bold">
+                        vast collection of popular titles
+                    </span>
+                    , from{' '}
+                    <span className="text-primary font-bold">
+                        timeless classics
+                    </span>{' '}
+                    to the{' '}
+                    <span className="text-primary font-bold">
+                        latest releases
+                    </span>{' '}
+                    and{' '}
+                    <span className="text-primary font-bold">
+                        most popular series
+                    </span>
+                    . Our service is the{' '}
+                    <span className="text-primary font-bold">
+                        go-to destination
+                    </span>{' '}
+                    for{' '}
+                    <span className="text-primary font-bold">
+                        movie and TV fans
+                    </span>{' '}
+                    looking for{' '}
+                    <span className="text-primary font-bold">
+                        in-depth information
+                    </span>{' '}
+                    about the movies and TV shows they love.
                 </p>
             </div>
             <div className="flex align-center justify-center pr-[5%] relative">
