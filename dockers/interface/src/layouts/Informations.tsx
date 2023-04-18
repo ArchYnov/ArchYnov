@@ -19,7 +19,7 @@ const Cinema = () => {
                     className="text-white
                     font-newake text-8xl pb-1"
                 >
-                    INFORMATIONS
+                    INFORMATION
                 </h1>
 
                 {/* <p className="text-xl text-white font-josefin text-justify">

@@ -41,9 +41,6 @@ const Movie = () => {
                 negativeCount++
             }
         }
-
-        console.log('Nombre de valeurs positives : ' + positiveCount)
-        console.log('Nombre de valeurs négatives : ' + negativeCount)
         sentiment_analysis = (positiveCount * 10) / tweets.count
     } else {
         console.log('Aucun tweet trouvé.')
@@ -94,7 +91,7 @@ const Movie = () => {
                         <div className="grid grid-cols-3 gap-10">
                             <StatBadge
                                 note={movie.vote_average}
-                                source="Note TMDB"
+                                source="TMDB Note"
                                 review_nbr={movie.vote_count}
                                 on={10}
                             />
