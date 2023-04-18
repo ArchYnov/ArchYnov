@@ -1,5 +1,6 @@
 from urllib.error import URLError
 from bs4 import BeautifulSoup
+from datetime import datetime
 from feedparser import parse
 import ssl
 
@@ -58,7 +59,7 @@ class RSSClient(object):
                 '_source': {
                     'title': article['title'],
                     'text': article['summary'],
-                    'date': article['published_parsed'],
+                    'date': datetime(*article['published_parsed'][:6]),
                 },
                 '_sentiment_analysis' : 'n/a'
             })

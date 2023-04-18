@@ -1,79 +1,93 @@
-import { useState } from 'react'
-import { FaChevronUp } from 'react-icons/fa'
-import { MovieCard, MoviesCarousel } from '../components'
+import { MoviesCarousel, ScrollTopButton } from '../components'
 import { useQuery } from '@tanstack/react-query'
+import axios from 'axios'
+import { Link } from 'react-router-dom'
+import { SyncLoader } from 'react-spinners'
 
 const Movies = () => {
-    const [showScroll, setShowScroll] = useState(false)
+    const {
+        isLoading: newMoviesLoading,
+        error: newMoviesError,
+        data: new_movies,
+    } = useQuery({
+        queryKey: ['newMovies'],
+        queryFn: async () =>
+            await axios
+                .get(
+                    'https://localhost:5000/api/v1/movies?sort=-release_date&limit=12'
+                )
+                .then((res) => res.data.result),
+    })
 
-    const checkScrollTop = () => {
-        if (!showScroll && window.pageYOffset > 400) {
-            setShowScroll(true)
-        } else if (showScroll && window.pageYOffset <= 400) {
-            setShowScroll(false)
-        }
-    }
-
-    const scrollTop = () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-
-    window.addEventListener('scroll', checkScrollTop)
-
-    const movie = {
-        adult: false,
-        backdrop_path: '/2rVkDZFLN6DI5PAoraoe9m4IRMN.jpg',
-        genre_ids: [12, 14, 35],
-        id: 493529,
-        original_language: 'en',
-        original_title: 'Dungeons & Dragons: Honor Among Thieves',
-        overview:
-            'A charming thief and a band of unlikely adventurers undertake an epic heist to retrieve a lost relic, but things go dangerously awry when they run afoul of the wrong people.',
-        popularity: 560.108,
-        poster_path: '/6LuXaihVIoJ5FeSiFb7CZMtU7du.jpg',
-        release_date: '2023-03-23',
-        title: 'Dungeons & Dragons: Honor Among Thieves',
-        video: false,
-        vote_average: 7.6,
-        vote_count: 222,
-    }
-
-    const { isLoading, error, data } = useQuery({
-        queryKey: ['repoData'],
-        queryFn: () => fetch('http://localhost:3000').then((res) => res.json()),
+    const {
+        isLoading: mostPopularLoading,
+        error: mostPopularError,
+        data: most_popular_movies,
+    } = useQuery({
+        queryKey: ['popularMovies'],
+        queryFn: async () =>
+            await axios
+                .get(
+                    'https://localhost:5000/api/v1/movies?sort=-vote_average&limit=12'
+                )
+                .then((res) => res.data.result),
     })
 
     return (
-        <main className="h-screen bg-background pt-[104px]">
-            <h2
-                className="text-white
-                    font-newake text-4xl pb-1"
-            >
-                DERNIÈRES SORTIES
-            </h2>
-            <div className="flex">
-                <MovieCard movie={movie} />
-                <MovieCard movie={movie} />
-                <MovieCard movie={movie} />
+        <main className="bg-background pt-[90px] pb-10 px-9 min-h-screen">
+            <div className="py-4">
+                <h2
+                    className="text-white
+                    font-newake text-6xl pb-1 text-center"
+                >
+                    LATEST RELEASES
+                </h2>
+                {newMoviesLoading ? (
+                    <SyncLoader
+                        color="#BB004B"
+                        className="text-center my-10"
+                        size="30"
+                        speedMultiplier={0.5}
+                    />
+                ) : (
+                    <MoviesCarousel movies={new_movies} />
+                )}
+                {/* {!newMoviesLoading && new_movies && (
+                    <MoviesCarousel movies={new_movies} />
+                )} */}
             </div>
 
-            <h2
-                className="text-white
-                    font-newake text-4xl pb-1"
-            >
-                LES PLUS APPRECIES
-            </h2>
-            <MoviesCarousel />
-            <button
-                className={
-                    'scrollTop bg-primary text-white rounded-full text-center fixed bottom-4 right-4 h-12 w-12 flex justify-center items-center cursor-pointer shadow-md transition-opacity duration-300' +
-                    (showScroll ? ' opacity-100' : ' opacity-0')
-                }
-                onClick={scrollTop}
-                style={{ display: showScroll ? 'flex' : 'none' }}
-            >
-                <FaChevronUp size={20} className="mt-[-2px]" />
-            </button>
+            <div className="py-4">
+                <h2
+                    className="text-white
+                    font-newake text-6xl pb-1 pt-4 text-center"
+                >
+                    THE MOST APPRECIATED
+                </h2>
+                {mostPopularLoading ? (
+                    <SyncLoader
+                        color="#BB004B"
+                        className="text-center my-10"
+                        size="30"
+                        speedMultiplier={0.5}
+                    />
+                ) : (
+                    <MoviesCarousel movies={most_popular_movies} />
+                )}
+                {/* {!mostPopularLoading && most_popular_movies && (
+                    <MoviesCarousel movies={most_popular_movies} />
+                )} */}
+            </div>
+            <div className="py-4">
+                <div className="pt-9 flex justify-center">
+                    <Link to="/movies/all">
+                        <button className="text-4xl cursor-pointer decoration-none text-neon border-4 border-neon py-4 px-3 font-josefin rounded-lg btn-shadows neon-btn">
+                            All movies
+                        </button>
+                    </Link>
+                </div>
+            </div>
+            <ScrollTopButton />
         </main>
     )
 }

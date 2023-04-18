@@ -31,19 +31,19 @@ const Hero = () => {
                     font-newake relative text-8xl mb-20 cursor-pointer w-fit neon-title"
                     onClick={handleClickScrollToCinema}
                 >
-                    CINÉMA
+                    CINEMA
                 </h1>
                 <h1
                     className="text-white font-newake text-8xl mb-20 cursor-pointer w-fit neon-title"
                     onClick={handleClickScrollToInformations}
                 >
-                    INFORMATIONS
+                    INFORMATION
                 </h1>
                 <h1
                     className="font-newake text-white text-8xl cursor-pointer w-fit neon-title"
                     onClick={handleClickScrollToAnalyses}
                 >
-                    ANALYSES
+                    ANALYSIS
                 </h1>
             </div>
             <div className="flex align-center justify-center pr-[5%] relative">

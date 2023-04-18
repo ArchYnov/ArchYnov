@@ -161,9 +161,9 @@ services:
       context: ./
       dockerfile: api/DockerFile
     volumes:
-      - ./api:/usr/app
+      - ./api:/app
     ports:
-      - 5000:5000
+      - 5000:443
     depends_on:
       - mongo
     networks:
@@ -219,17 +219,17 @@ services:
       - kafka-network
 
   # UI
-  # interface:
-  #   container_name: interface
-  #   build:
-  #     context: ./
-  #     dockerfile: interface/Dockerfile
-  #   volumes:
-  #     - ./interface:/app
-  #   ports:
-  #     - 8080:3000
-  #   depends_on:
-  #     - api-movies
+  interface:
+    container_name: interface
+    build:
+      context: ./
+      dockerfile: interface/Dockerfile
+    volumes:
+      - ./interface:/app
+    ports:
+      - 8080:3000
+    depends_on:
+      - api-movies
 
 
 networks:

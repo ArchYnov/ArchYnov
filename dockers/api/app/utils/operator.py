@@ -27,7 +27,7 @@ def get_operator(operator: str) -> str:
     return OPERATOR_TYPES_MONGO[operator]
 
 def get_filter(filters: list) -> dict:
-    regex = r"(?P<property>\w+)(?P<operater><>|>=|<=|!=|=|>|<|\[]|\[!]|)(?P<value>.*)"
+    regex = r"(?P<property>[a-zA-Z0-9_.]+)(?P<operater><>|>=|<=|!=|=|>|<|\[]|\[!]|)(?P<value>.*)"
     filters = [re.finditer(regex, f) for f in filters]
     # print(filters)
     filter = {}

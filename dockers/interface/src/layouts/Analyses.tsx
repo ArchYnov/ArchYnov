@@ -1,5 +1,6 @@
 import diamond from '../assets/backgrounds/diamond.svg'
 import analysis_section from '../assets/backgrounds/analysis.png'
+import { Link } from 'react-router-dom'
 
 const Analyses = () => {
     return (
@@ -20,11 +21,10 @@ const Analyses = () => {
                     className="text-white
                     font-newake text-8xl pb-1"
                 >
-                    ANALYSES
+                    ANALYSIS
                 </h1>
-
+                {/* 
                 <p className="text-xl text-white font-josefin text-justify">
-                    Découvrez les analyses de notre équipe de data scientists.
                     Nous vous proposons{' '}
                     <span className="text-primary font-bold">
                         d'explorer les données
@@ -35,13 +35,12 @@ const Analyses = () => {
                     </span>{' '}
                     en utilisant des{' '}
                     <span className="text-primary font-bold">
-                        techniques de machine learning
+                        techniques de deep learning
                     </span>
-                    . Vous pourrez parcourir les
+                    . Vous pourrez parcourir les{' '}
                     <span className="text-primary font-bold">
-                        {' '}
                         analyses de sentiment
-                    </span>
+                    </span>{' '}
                     qui permettent de déterminer les{' '}
                     <span className="text-primary font-bold">réactions</span> et
                     les{' '}
@@ -85,11 +84,67 @@ const Analyses = () => {
                         prédire le succès ou l'échec
                     </span>{' '}
                     d'un film avant même sa sortie.
+                </p> */}
+                <p className="text-xl text-white font-josefin text-justify">
+                    We offer you to{' '}
+                    <span className="text-primary font-bold">explore data</span>{' '}
+                    from the{' '}
+                    <span className="text-primary font-bold">
+                        movie industry
+                    </span>{' '}
+                    using{' '}
+                    <span className="text-primary font-bold">
+                        deep learning techniques
+                    </span>{' '}
+                    . You will be able to browse{' '}
+                    <span className="text-primary font-bold">
+                        sentiment analysis
+                    </span>{' '}
+                    that determine{' '}
+                    <span className="text-primary font-bold">
+                        audience reactions
+                    </span>{' '}
+                    and <span className="text-primary font-bold">emotions</span>{' '}
+                    towards movies. Using{' '}
+                    <span className="text-primary font-bold">
+                        sophisticated deep learning models
+                    </span>
+                    , the analytics in this section{' '}
+                    <span className="text-primary font-bold">
+                        extract valuable informations
+                    </span>{' '}
+                    from{' '}
+                    <span className="text-primary font-bold">
+                        large amounts of data
+                    </span>
+                    , such as{' '}
+                    <span className="text-primary font-bold">
+                        movie reviews
+                    </span>{' '}
+                    and{' '}
+                    <span className="text-primary font-bold">
+                        social media comments
+                    </span>
+                    . This information is then used to determine the{' '}
+                    <span className="text-primary font-bold">
+                        general public's opinion of movies
+                    </span>
+                    ,{' '}
+                    <span className="text-primary font-bold">
+                        identify emerging trends
+                    </span>
+                    , and{' '}
+                    <span className="text-primary font-bold">
+                        predict the success or failure
+                    </span>{' '}
+                    of a movie before it is even released.
                 </p>
                 <div className="pt-9 flex justify-end">
-                    <button className="text-4xl cursor-pointer decoration-none text-neon border-4 border-neon py-4 px-3 font-josefin rounded-lg btn-shadows neon-btn">
-                        Découvrez nos films
-                    </button>
+                    <Link to="/movies">
+                        <button className="text-4xl cursor-pointer decoration-none text-neon border-4 border-neon py-4 px-3 font-josefin rounded-lg btn-shadows neon-btn">
+                            Check out our movies
+                        </button>
+                    </Link>
                 </div>
             </div>
         </section>
