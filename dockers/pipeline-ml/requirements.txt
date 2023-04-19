@@ -49,3 +49,5 @@ typing_extensions==4.5.0
 urllib3==1.26.15
 Werkzeug==2.2.3
 wrapt==1.14.1
+pandas==2.0.0
+nltk==3.8.1
