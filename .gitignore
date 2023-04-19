@@ -129,3 +129,6 @@ dmypy.json
 cython_debug/
 
 node_modules
+
+sentiment_analysis_DL
+training.1600000.processed.noemoticon.csv
