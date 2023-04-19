@@ -8,7 +8,7 @@ class Mongo:
     def __init__(self, config: Settings):
         self.config = config
         self.client = MongoClient(self.config.MONGO_URL)
-        self.db = None
+        self.db = self.client[self.config.MONGO_DB_NAME]
 
     async def connect(self):
         self.db = self.client[self.config.MONGO_DB_NAME]
