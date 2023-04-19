@@ -30,9 +30,10 @@ class TMDbClient(object):
         IN   : poster_path
         OUT  : base64 encoded poster
         """
-        return str(base64.b64encode(requests.get(
+        data64_encoded = base64.b64encode(requests.get(
             f'https://www.themoviedb.org/t/p/w600_and_h900_bestv2{poster_path}'
-        ).content))
+        ).content)
+        return data64_encoded.decode('utf-8')
 
     def fetchNewMovies(self):
         try :
