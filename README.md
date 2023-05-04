@@ -1,4 +1,4 @@
-<center><h1>ArchYnov</h1></center>
+<center><h1>Distributed Architecture</h1></center>
 <center>BAGNIS Paul - GUERN François - DA SILVA TEIXEIRA David - RICHARD Jérémy - ARDILLY Louis</center>
 <br><br>
 
